@@ -1,0 +1,153 @@
+@font-face {
+  font-family: "OpenSans";
+  src:
+    url("./fonts/OpenSans-Bold.woff") format("woff2"),
+    url("./fonts/OpenSans-Bold.woff2") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OpenSans";
+  src:
+    url("./fonts/OpenSans-Regular.woff") format("woff2"),
+    url("./fonts/OpenSans-Regular.woff2") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "OpenSans";
+  src:
+    url("./fonts/OpenSans-SemiBold.woff") format("woff2"),
+    url("./fonts/OpenSans-SemiBold.woff2") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Press Start 2P";
+  src:
+    url("./fonts/PressStart2P-Regular.woff") format("woff2"),
+    url("./fonts/PressStart2P-Regular.woff2") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Press Start 2P";
+  src:
+    url("./fonts/PressStart2P-Regular.woff") format("woff2"),
+    url("./fonts/PressStart2P-Regular.woff2") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Press Start 2P";
+  src:
+    url("./fonts/PressStart2P-Regular.woff") format("woff2"),
+    url("./fonts/PressStart2P-Regular.woff2") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'OpenSans', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.radio-option{
+  cursor: pointer !important;
+}
+
+.fade-enter-from {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  transition: opacity 0.7s ease-in-out;
+}
+
+/* Анимация исчезновения */
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+
+.button{
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+.button.fight{
+  background-color: #bb2d3b;
+}
+.button.bonus{
+  background-color: #198754;
+}
+/* @import './base.css';
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
+} */
+
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.4s ease;
+}
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}

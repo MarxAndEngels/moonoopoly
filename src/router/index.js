@@ -1,0 +1,26 @@
+// src/router/index.js
+import { createRouter, createWebHashHistory } from 'vue-router';
+import Home from '../components/Home.vue';
+import Main from '../components/Main.vue';
+
+// Определение маршрутов
+const routes = [
+  {
+    path: '/', // Путь к странице
+    name: 'Home', // Имя маршрута (опционально)
+    component: Home, // Компонент, который будет отображаться
+  },
+  {
+    path: '/:count/play',
+    name: 'Main',
+    component: Main,
+  },
+
+];
+
+const router = createRouter({
+ history: createWebHashHistory(), // решает проблемы с роутингом
+  routes,
+});
+
+export default router;
