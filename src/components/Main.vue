@@ -28,6 +28,20 @@ const phrases = ref([
   "Ваша бизнес-империя ждет Вашего шага...",
 ])
 
+const change = ref([
+  {
+    title: 'Вы заняли второе место в конкурсе красоты. Получите 1000к',
+    type: 'plus',
+    count: 1000
+  },
+  {
+    title: 'Вы наследуете 1000к',
+    type: 'plus',
+    count: 1000
+  },
+
+])
+
 const currentPhrase = ref(phrases.value[0]);
 
 const setRandomPhrase = () => {
@@ -36,25 +50,24 @@ const setRandomPhrase = () => {
 };
 
 const players = ref([
-  { id: 1, name: 'Игрок 1', balance: '15000', color: '#ff4d4d', avatar: '👨‍🦰', position: 0, active: true, incomingTrade: null
+  { id: 1, name: 'Игрок 1', balance: '5500', color: '#ff4d4d', avatar: '👨‍🦰', position: 0, active: true, incomingTrade: null,isInJail: false, jailTurns: 0 },
+  { id: 2, name: 'Игрок 2', balance: '5000', color: '#4d94ff', avatar: '👤', position: 0, active: false, incomingTrade: null ,isInJail: false, jailTurns: 0
    },
-  { id: 2, name: 'Игрок 2', balance: '15000', color: '#4d94ff', avatar: '👤', position: 0, active: false, incomingTrade: null
+  { id: 3, name: 'Игрок 3', balance: '5000', color: '#68d391', avatar: '🤴', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0
    },
-  { id: 3, name: 'Игрок 3', balance: '15000', color: '#68d391', avatar: '🤴', position: 0, active: false, incomingTrade: null
-   },
-  { id: 4, name: 'Игрок 4', balance: '15000', color: '#b06ee6', avatar: '🧥', position: 0, active: false, incomingTrade: null }
+  { id: 4, name: 'Игрок 4', balance: '5000', color: '#b06ee6', avatar: '🧥', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0 }
 ]);
 
 
-const currentStatus = computed(() => {
-  const p = currentPlayer.value;
-  if (!p || !p.phrases) return "Ваш ход!";
+// const currentStatus = computed(() => {
+//   const p = currentPlayer.value;
+//   if (!p || !p.phrases) return "Ваш ход!";
   
-  // Привязываем выбор фразы к ID игрока, чтобы она не менялась 
-  // при каждом обновлении интерфейса, а была стабильной весь ход
-  const phraseIndex = p.id % p.phrases.length; 
-  return p.phrases[phraseIndex];
-});
+//   // Привязываем выбор фразы к ID игрока, чтобы она не менялась 
+//   // при каждом обновлении интерфейса, а была стабильной весь ход
+//   const phraseIndex = p.id % p.phrases.length; 
+//   return p.phrases[phraseIndex];
+// });
 
 const activePlayers = computed(() => players.value.slice(0, playerCount.value));
 const currentPlayer = computed(() => activePlayers.value.find(p => p.active) || activePlayers.value[0]);
@@ -191,6 +204,12 @@ const skipBuy = () => {
   nextTurn();
 };
 
+const playPoliceSound = () => {
+  const audio = new Audio('/audio/ment.mp3'); 
+  audio.volume = 0.4; // Громкость от 0 до 1
+  audio.play().catch(e => console.log("Ошибка воспроизведения:", e));
+};
+
 const nextTurn = () => {
   if (checkWinner()) return;
   
@@ -244,7 +263,16 @@ const rotations = {
 
 const moveSmoothly = async (player, totalSteps) => {
   for (let i = 0; i < totalSteps; i++) {
-    player.position = (player.position + 1) % 40;
+    const nextPosition = (player.position + 1) % 40;
+    
+    // Проверка: если мы переходим с 39 на 0 — это прохождение круга
+    if (player.position === 39 && nextPosition === 0) {
+      const bonus = 1000;
+      player.balance = (parseInt(player.balance) + bonus).toString();
+      addLog(`${player.name} прошел круг и получил ${bonus}k!`);
+    }
+
+    player.position = nextPosition;
     await new Promise(resolve => setTimeout(resolve, 250));
   }
 };
@@ -268,7 +296,42 @@ const rollDice = async () => {
   await moveSmoothly(actor, total);
   
   const currentStep = steps.value.find(s => s.id === actor.position);
-  addLog(`${actor.name} остановился на ${currentStep.name}`);
+  addLog(`${actor.name} остановился на поле "${currentStep.name}"`);
+ //арестован за отмывание денег и отправляется в полицейский участок!
+ //должен оплатить расходы на 
+ // остановился на поле подоходный налог и должен заплатить банку 2000
+ // остановился на поле налог на роскошь и должен заплатить банку 2000
+  if (currentStep.type === 'jail') {
+    addLog(`${actor.name} просто посетил полицейский участок и двинулся дальше!`);
+  }
+  if (currentStep.type === 'tax') {
+  const taxAmount = 2000;
+  addLog(`${actor.name} оплачивает налог на доходы в размере ${taxAmount}k`);
+  processTax(actor, taxAmount);
+  return; 
+}
+// --- 2. ЛОГИКА: НАЛОГ НА РОСКОШЬ (тип tax2) ---
+// if (currentStep.type === 'tax2') {
+//   const luxuryTaxAmount = 1000;
+//   addLog(`${actor.name} оплачивает нналог на роскошь в размере ${luxuryTaxAmount}k`);
+//   processTax(actor, luxuryTaxAmount);
+//   return;
+// }
+  
+  if (currentStep.type === 'park') {
+   addLog(`Время отдыха! Вы припарковались в удачном месте. Наслаждайтесь тишиной, пока остальные тратят деньги на аренду.`);
+  }
+  if (currentStep.type === 'car') {
+    addLog(`${actor.name} арестован полицией и отправляется в полицейский участок!`);
+    // Небольшая задержка перед "телепортацией", чтобы игрок понял, что произошло
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    playPoliceSound();
+    actor.position = 10; // Перемещаем на ID 10 (Jail)
+    actor.isInJail = true; // Активируем статус тюрьмы
+    actor.jailTurns = 3;   // Ставим счетчик на 3 хода
+    nextTurn();
+    return; // Выходим из функции, чтобы не срабатывали проверки ниже
+  }
 
   if (currentStep.type === 'property') {
     if (!currentStep.owner) {
@@ -300,19 +363,7 @@ const rollDice = async () => {
         const lastMoney = Math.max(0, finalActorBalance);
         owner.balance = (parseInt(owner.balance) + lastMoney).toString();
         
-        // Устанавливаем статус банкрота
-        actor.balance = "-1"; 
-        
-        // Освобождаем оставшееся имущество
-        steps.value.forEach(s => {
-          if (s.owner === actor.id) {
-            s.owner = null;
-            s.level = 1;
-          }
-        });
-
-        addLog(`💥 ${actor.name} обанкротился и покидает поле!`);
-        nextTurn();
+        handleBankrupt(actor); 
       } else {
         actor.balance = (finalActorBalance - rentAmount).toString();
         owner.balance = (parseInt(owner.balance) + rentAmount).toString();
@@ -330,28 +381,28 @@ const rollDice = async () => {
 
 const steps = ref([
   { id: 0, name: 'Start', type: 'corner', logo: '/img/start.png' },
-  { id: 1, name: 'Nike', type: 'property', color: '#e7a5e7', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 600, 1800, 2400, 3000], level: 1, logo: '/img/nike.png', description: 'Спортивная одежда, обувь и аксессуары', country: 'США', countryImg: '/img/flags/usa.svg', relations: 1 },
-  { id: 2, name: '?', type: 'action', logo: '/img/question.png' },
-  { id: 3, name: 'Adidas', type: 'property', color: '#e7a5e7', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 600, 1800, 2400, 3000], level: 1, logo: '/img/ADIDAS.png', description: 'Спортивная одежда, обувь и аксессуары', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 1 },
-  { id: 4, name: '?', type: 'action', logo: '/img/money.png'},
+  { id: 1, name: 'Nike', type: 'property', color: '#e7a5e7', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 600, 1800, 2400, 3000], level: 1, logo: '/img/nike.png', description: 'Спортивная одежда, обувь и аксессуары', country: 'США', countryImg: '/img/flags/usa.svg', relations: 1, owner: 1 },
+  { id: 2, name: '?', type: 'tax', logo: '/img/question.png' },
+  { id: 3, name: 'Adidas', type: 'property', color: '#e7a5e7', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 600, 1800, 2400, 3000], level: 1, logo: '/img/ADIDAS.png', description: 'Спортивная одежда, обувь и аксессуары', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 1, owner: 1},
+  { id: 4, name: 'Налог на доходы', type: 'tax', logo: '/img/money.png'},
   { id: 5, name: 'Microsoft', type: 'property', color: '#d31a2c', price: '3400', sellPrice: [1700, 2300, 3800, 5300, 6800], rent: [283, 3400, 10200, 13600, 17000], level: 1, logo: '/img/MICROSOFT.png', description: 'Технологические монополисты, владеющие данными. Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
   { id: 6, name: 'Facebook', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 2000, 6000, 8000, 10000], level: 1, logo: '/img/FACEBOOK.png', description: 'Социальные интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
-  { id: 7, name: '?', type: 'action', logo: '/img/question.png' },
+  { id: 7, name: '?', type: 'tax', logo: '/img/question.png' },
   { id: 8, name: 'X', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 2000, 6000, 8000, 10000], level: 1, logo: '/img/X.png', description: 'Социальные интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
   { id: 9, name: 'Telegram', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 2000, 6000, 8000, 10000], level: 1, logo: '/img/TELEGRAM.png', description: 'Социальные интернет-сервисы', relations: 4 },
-  { id: 10, name: 'Jail', type: 'corner', logo: '/img/jail.png' },
+  { id: 10, name: 'Полицеский участок', type: 'jail', logo: '/img/jail.svg' },
   { id: 11, name: 'Coca-Cola', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 1400, 4200, 5600, 7000], level: 1, logo: '/img/cc.png', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
   { id: 12, name: 'McDonald’s', type: 'property', color: '#c35831', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 1300, 3900, 5200, 6500], level: 1, logo: '/img/mac.png', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
   { id: 13, name: 'Pepsi', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 1400, 4200, 5600, 7000], level: 1, logo: '/img/PEPSI.png', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
   { id: 14, name: 'Dr Pepper', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 1400, 4200, 5600, 7000], level: 1, logo: '/img/dr.png', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
   { id: 15, name: 'Google', type: 'property', color: '#d31a2c', price: '3400', sellPrice: [1700, 2300, 3800, 5300, 6800], rent: [283, 3400, 10200, 13600, 17000], level: 1, logo: '/img/GOOGLE.png', description: 'Технологические монополисты, владеющие данными. Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
   { id: 16, name: 'Visa', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 2200, 6600, 8800, 11000], level: 1, logo: '/img/VISA.png', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 5 },
-  { id: 17, name: '?', type: 'action', logo: '/img/question.png' },
+  { id: 17, name: '?', type: 'tax', logo: '/img/question.png' },
   { id: 18, name: 'Mastercard', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 2200, 6600, 8800, 11000], level: 1, logo: '/img/MASTERCARD.png', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 5 },
   { id: 19, name: 'Мир', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 2200, 6600, 8800, 11000], level: 1, logo: '/img/mir.png', description: 'Платежные системы', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 5 },
-  { id: 20, name: 'Free Park', type: 'corner', logo: '/img/jackpot.png' },
+  { id: 20, name: 'Бесплатная парковка', type: 'park', logo: '/img/park.svg' },
   { id: 21, name: 'Toyota', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 2600, 7800, 10400, 13000], level: 1, logo: '/img/TOYOTA.png', description: 'Автомобили', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 6 },
-  { id: 22, name: '?', type: 'action', logo: '/img/question.png' },
+  { id: 22, name: '?', type: 'tax', logo: '/img/question.png' },
   { id: 23, name: 'Volkswagen', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 2600, 7800, 10400, 13000], level: 1, logo: '/img/VOLKSWAGEN.png', description: 'Автомобили', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 6 },
   { id: 24, name: 'Lada', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 2600, 7800, 10400, 13000], level: 1, logo: '/img/LADA.png', description: 'Автомобили', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 6 },
   { id: 25, name: 'Яндекс', type: 'property', color: '#d31a2c', price: '3400', sellPrice: [1700, 2300, 3800, 5300, 6800], rent: [283, 3400, 10200, 13600, 17000], level: 1, logo: '/img/yandex.png', description: 'Технологические монополисты, владеющие данными. Цифровые услуги, интернет-сервисы', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 10 },
@@ -359,17 +410,69 @@ const steps = ref([
   { id: 27, name: 'Ccb', type: 'property', color: '#93bbf6', price: '2800', sellPrice: [1400, 2000, 3500, 5000, 6500], rent: [233, 2800, 8400, 11200, 14000], level: 1, logo: '/img/CCB.png', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
   { id: 28, name: 'Kfc', type: 'property', color: '#c35831', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 1300, 3900, 5200, 6500], level: 1, logo: '/img/kfc.png', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
   { id: 29, name: 'Сбербанк', type: 'property', color: '#93bbf6', price: '2800', sellPrice: [1400, 2000, 3500, 5000, 6500], rent: [233, 2800, 8400, 11200, 14000], level: 1, logo: '/img/sber.png', description: 'Банки', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 7 },
-  { id: 30, name: 'Go Jail', type: 'corner', logo: '/img/police1.png' },
+  { id: 30, name: 'Злой полицейский', type: 'car', logo: '/img/police1.svg' },
   { id: 31, name: 'Apple', type: 'property', color: '#a54bef', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 3000, 9000, 12000, 15000], level: 1, logo: '/img/APPLE.png', description: 'Электроника высокого уровня', country: 'США', countryImg: '/img/flags/usa.svg', relations: 8 },
   { id: 32, name: 'Samsung', type: 'property', color: '#a54bef', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 3000, 9000, 12000, 15000], level: 1, logo: '/img/SAMSUNG.png', description: 'Электроника высокого уровня', country: 'Корея', countryImg: '/img/flags/korea.svg', relations: 8 },
-  { id: 33, name: '?', type: 'action', logo: '/img/question.png' },
+  { id: 33, name: '?', type: 'tax', logo: '/img/question.png' },
   { id: 34, name: 'Xiaomi', type: 'property', color: '#a54bef', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 3000, 9000, 12000, 15000], level: 1, logo: '/img/xiaomi.png', description: 'Электроника высокого уровня', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 8 },
   { id: 35, name: 'Saudi Aramco', type: 'property', color: '#292929', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 3300, 9900, 13200, 16500], level: 1, logo: '/img/sa.png', description: 'Добыча, переработка и экспорт ресурсов', country: 'Саудовская Аравия', countryImg: '/img/flags/sa.svg', relations: 9 },
-  { id: 36, name: '?', type: 'action', logo: '/img/diamond.png' },
+  { id: 36, name: 'Налог на роскошь', type: 'tax2', logo: '/img/diamond.png' },
   { id: 37, name: 'Shell', type: 'property', color: '#292929', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 3300, 9900, 13200, 16500], level: 1, logo: '/img/shell.png', description: 'Добыча, переработка и экспорт ресурсов', country: 'Великобритания', countryImg: '/img/flags/uk.svg', relations: 9 },
-  { id: 38, name: '?', type: 'action', logo: '/img/question.png' },
+  { id: 38, name: '?', type: 'tax', logo: '/img/question.png' },
   { id: 39, name: 'Лукойл', type: 'property', color: '#292929', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 3300, 9900, 13200, 16500], level: 1, logo: '/img/l.png', description: 'Добыча, переработка и экспорт ресурсов', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 9 },
 ]);
+
+const handleBankrupt = (actor) => {
+  // Устанавливаем статус банкрота
+        actor.balance = "-1"; 
+        
+        // Освобождаем оставшееся имущество
+        steps.value.forEach(s => {
+          if (s.owner === actor.id) {
+            s.owner = null;
+            s.level = 1;
+          }
+        });
+
+        addLog(`💥 ${actor.name} обанкротился и покидает поле!`);
+        nextTurn();
+}
+
+const processTax = (actor, amount) => {
+  // 1. Считаем, может ли игрок в принципе оплатить налог (деньги + всё имущество)
+  const myProperties = steps.value.filter(s => s.owner === actor.id);
+  const totalAssets = myProperties.reduce((sum, p) => sum + parseInt(p.sellPrice[p.level - 1]), 0);
+  const totalWealth = parseInt(actor.balance) + totalAssets;
+
+  if (totalWealth < amount) {
+    // Сценарий мгновенного банкротства (даже если всё продаст — не хватит)
+    addLog(`У ${actor.name} нет средств на оплату налогов! Банкротство.`);
+    handleBankrupt(actor); // Используем общую функцию очистки игрока
+    return;
+  }
+
+  // 2. Если активов хватает, запускаем процесс продажи (ваш цикл while)
+  while (parseInt(actor.balance) < amount) {
+    const currentProps = steps.value.filter(s => s.owner === actor.id);
+    // Продаем самое дешевое (уровень 1) в первую очередь
+    const propertyToSell = currentProps.sort((a, b) => a.level - b.level)[0];
+    
+    const sellPrice = parseInt(propertyToSell.sellPrice[propertyToSell.level - 1]);
+    actor.balance = (parseInt(actor.balance) + sellPrice).toString();
+    
+    addLog(`Налоговая служба: ${actor.name} продал ${propertyToSell.name} за ${sellPrice}k`);
+    
+    propertyToSell.owner = null;
+    propertyToSell.level = 1;
+  }
+
+  // 3. Финальное списание
+  actor.balance = (parseInt(actor.balance) - amount).toString();
+  addLog(`Налог ${amount}k оплачен. Текущий баланс ${actor.name}: ${actor.balance}k`);
+  
+  // 4. После налога ход всегда завершается
+  nextTurn();
+};
 
 const getPropertyFullValue = (cell) => {
   if (!cell || !cell.price) return 0;
@@ -691,6 +794,65 @@ const checkWinner = () => {
   }
   return false;
 };
+
+const payFine = () => {
+  const actor = currentPlayer.value;
+  const fine = 500;
+  
+  // --- ЛОГИКА АВТО-ПРОДАЖИ ПРИ НЕХВАТКЕ СРЕДСТВ НА ШТРАФ ---
+  while (parseInt(actor.balance) < fine) {
+    // Ищем всё имущество игрока
+    const myProperties = steps.value.filter(s => s.owner === actor.id);
+    
+    // Если имущества больше нет, а денег всё еще не хватает — выходим из цикла
+    if (myProperties.length === 0) break;
+
+    // Сортируем: сначала продаем объекты с низким уровнем (без домов), чтобы спасти прокачанные
+    const propertyToSell = myProperties.sort((a, b) => a.level - b.level)[0];
+
+    // Получаем цену продажи для текущего уровня объекта
+    const sellPrice = propertyToSell.sellPrice[propertyToSell.level - 1];
+    
+    // Прибавляем деньги к балансу
+    actor.balance = (parseInt(actor.balance) + parseInt(sellPrice)).toString();
+    
+    addLog(`Полиция: ${actor.name} продал ${propertyToSell.name} за ${sellPrice}k, чтобы оплатить штраф`);
+    
+    // Сбрасываем объект
+    propertyToSell.owner = null;
+    propertyToSell.level = 1;
+  }
+
+  // --- ПРОВЕРКА РЕЗУЛЬТАТА ---
+  const finalBalance = parseInt(actor.balance);
+
+  if (finalBalance >= fine) {
+    // Денег хватило (сразу или после продаж)
+    actor.balance = (finalBalance - fine).toString();
+    actor.isInJail = false;
+    actor.jailTurns = 0;
+    addLog(`${actor.name} оплатил штраф 500k и вышел на свободу!`);
+    // После оплаты в тюрьме ход не переходит (nextTurn не нужен), игрок может кинуть кубики
+  } else {
+    // Даже после продажи всего имущества денег не набралось
+    addLog(`${actor.name} не смог оплатить штраф в тюрьме и обанкротился!`);
+    
+    // Вызываем вашу общую логику банкротства
+    handleBankrupt(actor);
+  }
+};
+
+const skipJailTurn = () => {
+  const actor = currentPlayer.value;
+  actor.jailTurns -= 1;
+  addLog(`${actor.name} пропускает ход в участке. Осталось сидеть: ${actor.jailTurns}`);
+  
+  if (actor.jailTurns <= 0) {
+    actor.isInJail = false;
+    addLog(`${actor.name} отбыл срок и выйдет в следующем ходу.`);
+  }
+  nextTurn();
+};
 </script>
 
 <template>
@@ -739,7 +901,7 @@ const checkWinner = () => {
             @click="handleCellClick(cell)">
             <div v-if="cell.price" class="price-tag p-top" :style="{ background: cell.color }">{{ cell.owner ? cell.rent[cell.level - 1] : cell.price }}k</div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" class="cell-logo">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -760,7 +922,7 @@ const checkWinner = () => {
             @click="handleCellClick(cell)">
             <div v-if="cell.price" class="price-tag p-right" :style="{ background: cell.color }">{{ cell.owner ? cell.rent[cell.level - 1] : cell.price }}k</div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" class="cell-logo">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -777,7 +939,7 @@ const checkWinner = () => {
             @click="handleCellClick(cell)">
             <div v-if="cell.price" class="price-tag p-bottom" :style="{ background: cell.color }">{{ cell.owner ? cell.rent[cell.level - 1] : cell.price }}k</div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" class="cell-logo">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -794,7 +956,7 @@ const checkWinner = () => {
             @click="handleCellClick(cell)">
             <div v-if="cell.price" class="price-tag p-left" :style="{ background: cell.color }">{{ cell.owner ? cell.rent[cell.level - 1] : cell.price }}k</div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" class="cell-logo">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -962,8 +1124,12 @@ const checkWinner = () => {
               </div>
 
               <div v-else class="turn-card">
-                 <h2 class="turn-title">{{ currentPlayer.name }} ходит!</h2>
-                 <div class='turn-description'>
+                 <h2 v-if="currentPlayer.isInJail" class="turn-title">Вы задержаны! Осталось ходов: {{ currentPlayer.jailTurns }}</h2>
+                 <h2 v-else class="turn-title">{{ currentPlayer.name }} ходит!</h2>
+                 <div v-if="currentPlayer.isInJail" class='turn-description'>
+                 {{ currentPlayer.name }} изучает трещины на потолке полицейского участка
+                 </div>
+                 <div v-else class='turn-description'>
                  {{ currentPhrase  }}
                  </div>
                 <div class="dice-container">
@@ -975,7 +1141,16 @@ const checkWinner = () => {
                     </div>
                   </div>
                 </div>
-                <button class="action-button" @click="rollDice" :disabled="isRolling">
+                <div v-if="currentPlayer.isInJail" class="jail-controls">
+                  <img src="/img/police1.svg" class="jail-police-image" alt="">
+    <div class="buy-actions">
+      <button class="buy-btn" @click="payFine">
+      Заплатить 500k и выйти!
+      </button>
+    <button class="skip-btn" @click="skipJailTurn">Пропустить ход</button>
+    </div>
+          </div>
+                <button v-else class="action-button" @click="rollDice" :disabled="isRolling">
                   {{ isRolling ? 'Ход игрока...' : 'Бросить кубики' }}
                 </button>
               </div>
@@ -1004,6 +1179,7 @@ const checkWinner = () => {
 .cell { background: #fff; position: relative; display: flex; flex-direction: column; overflow: hidden; transition: background-color 0.4s; }
 .cell-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px; }
 .cell-logo { max-width: 85%; max-height: 65%; object-fit: contain; }
+.cell-logo.logo-small { max-width: 75%; max-height: 55%; }
 .cell-name { font-size: 10px; font-weight: bold; text-align: center; color: #333; }
 
 .top-cell.has-price .cell-content { transform: translateY(-6px); }
@@ -1501,5 +1677,8 @@ const checkWinner = () => {
     color: #aaa;
     margin-left: 6px;
     /* font-size: 14px; */
+}
+.jail-police-image{
+  max-width: 160px;
 }
 </style>
