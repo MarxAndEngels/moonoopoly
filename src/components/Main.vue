@@ -122,7 +122,7 @@ const players = ref([
   { id: 3, name: 'Игрок 3', balance: '17000', color: '#68d391', avatar: '/img/hero/animal-3.svg', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0
    },
   { id: 4, name: 'Игрок 4', balance: '17000', color: '#4d94ff', avatar: '/img/hero/animal-2.svg', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0 },
-   { id: 5, name: 'Игрок 5', balance: '17000', color: '#b06ee6', avatar: '/img/hero/animal-5.svg', position: 0, active: false, incomingTrade: null, isInJail: false, jailTurns: 0 }
+  { id: 5, name: 'Игрок 5', balance: '17000', color: '#b06ee6', avatar: '/img/hero/animal-5.svg', position: 0, active: false, incomingTrade: null, isInJail: false, jailTurns: 0 }
 ]);
 
 const activePlayers = computed(() => players.value.slice(0, playerCount.value));
