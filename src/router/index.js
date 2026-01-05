@@ -3,6 +3,16 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../components/Home.vue';
 import Main from '../components/Main.vue';
 
+// .avatar-icon{
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// }
+// .avatar-icon-img{
+//   width: 30px;
+//   height: auto;
+// }
+
 // Определение маршрутов
 const routes = [
   {
