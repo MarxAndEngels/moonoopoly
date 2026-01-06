@@ -717,9 +717,17 @@ const getTradeItemById = (id) => {
   return steps.value.find(s => s.id === id);
 };
 
+const fullScreanParam = ref(false);
+
 const toggleFullscreen = () => {
-  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-  else document.exitFullscreen();
+  if (!document.fullscreenElement){
+    document.documentElement.requestFullscreen();
+    fullScreanParam.value = true
+  }
+  else {
+    document.exitFullscreen();
+    fullScreanParam.value = false
+  }
 };
 
 // Переменная для хранения ключа текущего инпута ('myMoney' или 'theirMoney')
@@ -1060,7 +1068,7 @@ const removeNotification = (id) => {
         </div>
       </aside>
       <main class="board-container">
-        <div class="monopoly-grid" :class="{ 'trade-mode-active': isTradeOpen }">
+        <div class="monopoly-grid" :class="{ 'trade-mode-active': isTradeOpen,'full': fullScreanParam }">
           
           <div v-for="(cell, i) in topRow" :key="'top-'+cell.id" 
             class="cell top-cell" 
@@ -1374,6 +1382,9 @@ const removeNotification = (id) => {
 .monopoly-grid { 
   display: grid; grid-template-columns: 85px repeat(9, 1fr) 85px; grid-template-rows: 85px repeat(9, 1fr) 85px; 
   width: 90vh; height: 90vh; background: #333; gap: 2px; border: 4px solid #333; position: relative;
+}
+.monopoly-grid.full { 
+  width: 84vh;
 }
 
 .cell { background: #fff; position: relative; display: flex; flex-direction: column; overflow: hidden; transition: background-color 0.4s; }
