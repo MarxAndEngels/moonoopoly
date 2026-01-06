@@ -1384,7 +1384,8 @@ const removeNotification = (id) => {
   width: 90vh; height: 90vh; background: #333; gap: 2px; border: 4px solid #333; position: relative;
 }
 .monopoly-grid.full { 
-  width: 84vh;
+  width: 82vh;
+  height: 82vh;
 }
 
 .cell { background: #fff; position: relative; display: flex; flex-direction: column; overflow: hidden; transition: background-color 0.4s; }
