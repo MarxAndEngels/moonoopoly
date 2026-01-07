@@ -318,12 +318,12 @@ const rotations = {
 };
 
 const isSurvivalMode = computed(() => {
-  // Если 4 или 5 игроков — режим включается после 190 ходов
-  if (playerCount.value > 4 && turnCount.value > 190) return true;
-  if (playerCount.value === 4 && turnCount.value > 180) return true;
+  // Если 4 или 5 игроков — режим включается после 150 ходов
+  if (playerCount.value > 4 && turnCount.value > 150) return true;
+  if (playerCount.value === 4 && turnCount.value > 120) return true;
   // Если 3 игрока — режим включается после 150 ходов
-  if (playerCount.value === 3 && turnCount.value > 150) return true;
-  if (playerCount.value === 2 && turnCount.value > 100) return true;
+  if (playerCount.value === 3 && turnCount.value > 100) return true;
+  if (playerCount.value === 2 && turnCount.value > 80) return true;
   
   return false;
 });
