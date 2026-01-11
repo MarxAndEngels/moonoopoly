@@ -430,27 +430,47 @@ if (currentStep.type === 'tax2') {
     return; // Выходим из функции, чтобы не срабатывали проверки ниже
   }
 
-  if (currentStep.type === 'property') {
+
+  if (currentStep.type === 'property' || currentStep.type === 'train') {
     if (!currentStep.owner) {
       propertyToBuy.value = currentStep;
     } else if (currentStep.owner !== actor.id) {
       const owner = activePlayers.value.find(p => p.id === currentStep.owner);
-      const rentAmount = currentStep.rent[currentStep.level - 1];
+      const rentAmount = getCurrentRent(currentStep);
 
       // --- ЛОГИКА ПРОДАЖИ ПРИ НЕХВАТКЕ ---
       while (parseInt(actor.balance) < rentAmount) {
         const myProperties = steps.value.filter(s => s.owner === actor.id);
         if (myProperties.length === 0) break;
 
-        let propertyToSell = myProperties.find(p => p.level === 1);
-        if (!propertyToSell) propertyToSell = myProperties[0];
+       // ТРЁХЭТАПНЫЙ ПРИОРИТЕТ ПРОДАЖИ:
+      // 1. Сначала пустая недвижимость (level 1)
+      let propertyToSell = myProperties.find(p => p.type === 'property' && p.level === 1);
 
-        const sellPrice = propertyToSell.sellPrice[propertyToSell.level - 1];
+      // 2. Если таких нет — железные дороги (train)
+      if (!propertyToSell) {
+        propertyToSell = myProperties.find(p => p.type === 'train');
+      }
+
+      // 3. Если и их нет — развитая недвижимость (сортируем по уровню)
+      if (!propertyToSell) {
+        propertyToSell = [...myProperties].sort((a, b) => a.level - b.level)[0];
+      }
+         
+         // Безопасное получение цены продажи
+// Если это поезд, берем sellPrice[0]. Если дом - по текущему уровню.
+const currentLevelIdx = propertyToSell.level - 1;
+const sellPrice = (propertyToSell.sellPrice && propertyToSell.sellPrice[currentLevelIdx]) 
+                  ? propertyToSell.sellPrice[currentLevelIdx] 
+                  : Math.floor(parseInt(propertyToSell.price) / 2);
+                  
         actor.balance = (parseInt(actor.balance) + sellPrice).toString();
         
         addLog(`У ${actor.name} не хватило денег! Авто-продажа ${propertyToSell.name} за ${sellPrice}k`);
         propertyToSell.owner = null;
-        propertyToSell.level = 1;
+        if (propertyToSell.type === 'property') {
+          propertyToSell.level = 1;
+        }
       }
 
       // --- РАСЧЕТ И БАНКРОТСТВО ---
@@ -476,90 +496,81 @@ if (currentStep.type === 'tax2') {
   }
 };
 
-// const steps = ref([
-//   { id: 0, name: 'Start', type: 'start', logo: '/img/start.png' },
-//   { id: 1, name: 'Nike', type: 'property', color: '#e7a5e7', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/nike.png', description: 'Спортивная одежда, обувь и аксессуары', country: 'США', countryImg: '/img/flags/usa.svg', relations: 1 },
-//   { id: 2, name: 'Шанс', type: 'chance', logo: '/img/question.png' },
-//   { id: 3, name: 'Adidas', type: 'property', color: '#e7a5e7', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/ADIDAS.png', description: 'Спортивная одежда, обувь и аксессуары', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 1},
-//   { id: 4, name: 'Налог на доходы', type: 'tax', logo: '/img/money.png'},
-//   { id: 5, name: 'Apple', type: 'property', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 4000, 10000, 13000, 16000], level: 1, logo: '/img/train.svg', description: 'Электроника высокого уровня', country: 'США', countryImg: '/img/flags/usa.svg', relations: 8 },
-//   { id: 6, name: 'Facebook', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 3000, 7000, 9000, 11000], level: 1, logo: '/img/FACEBOOK.png', description: 'Социальные интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
-//   { id: 7, name: 'Шанс', type: 'chance', logo: '/img/question.png' },
-//   { id: 8, name: 'X', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 3000, 7000, 9000, 11000], level: 1, logo: '/img/X.png', description: 'Социальные интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
-//   { id: 9, name: 'Telegram', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 3000, 7000, 9000, 11000], level: 1, logo: '/img/TELEGRAM.png', description: 'Социальные интернет-сервисы', relations: 4 },
-//   { id: 10, name: 'Полицеский участок', type: 'jail', logo: '/img/jail.svg' },
-//   { id: 11, name: 'Coca-Cola', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 2400, 5200, 6600, 8000], level: 1, logo: '/img/cc.png', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-//   { id: 12, name: 'McDonald’s', type: 'property', color: '#c35831', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 4900, 6200, 7500], level: 1, logo: '/img/mac.png', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
-//   { id: 13, name: 'Pepsi', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 2400, 5200, 6600, 8000], level: 1, logo: '/img/PEPSI.png', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-//   { id: 14, name: 'Dr Pepper', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 2400, 5200, 6600, 8000], level: 1, logo: '/img/dr.png', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-//   { id: 15, name: 'Apple', type: 'property', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 4000, 10000, 13000, 16000], level: 1, logo: '/img/train.svg', description: 'Электроника высокого уровня', country: 'США', countryImg: '/img/flags/train.svg', relations: 8 },
-//   { id: 16, name: 'Visa', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 7600, 9800, 12000], level: 1, logo: '/img/VISA.png', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 5 },
-//   { id: 17, name: 'Шанс', type: 'chance', logo: '/img/question.png' },
-//   { id: 18, name: 'Mastercard', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 7600, 9800, 12000], level: 1, logo: '/img/MASTERCARD.png', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 5 },
-//   { id: 19, name: 'Мир', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 7600, 9800, 12000], level: 1, logo: '/img/mir.png', description: 'Платежные системы', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 5 },
-//   { id: 20, name: 'Бесплатная парковка', type: 'park', logo: '/img/park.svg' },
-//   { id: 21, name: 'Toyota', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 3600, 8800, 11400, 14000], level: 1, logo: '/img/TOYOTA.png', description: 'Автомобили', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 6 },
-//   { id: 22, name: 'Шанс', type: 'chance', logo: '/img/question.png' },
-//   { id: 23, name: 'Volkswagen', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 3600, 8800, 11400, 14000], level: 1, logo: '/img/VOLKSWAGEN.png', description: 'Автомобили', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 6 },
-//   { id: 24, name: 'Lada', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 3600, 8800, 11400, 14000], level: 1, logo: '/img/LADA.png', description: 'Автомобили', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 6 },
-//   { id: 25, name: 'Apple', type: 'property', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 4000, 10000, 13000, 16000], level: 1, logo: '/img/train.svg', description: 'Электроника высокого уровня', country: 'США', countryImg: '/img/flags/usa.svg', relations: 8 },
-//   { id: 26, name: 'Icbc', type: 'property', color: '#93bbf6', price: '2800', sellPrice: [1400, 2000, 3500, 5000, 6500], rent: [233, 3800, 9400, 12200, 15000], level: 1, logo: '/img/ICBC.png', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
-//   { id: 27, name: 'Ccb', type: 'property', color: '#93bbf6', price: '2800', sellPrice: [1400, 2000, 3500, 5000, 6500], rent: [233, 3800, 9400, 12200, 15000], level: 1, logo: '/img/CCB.png', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
-//   { id: 28, name: 'Kfc', type: 'property', color: '#c35831', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 4900, 6200, 7500], level: 1, logo: '/img/kfc.png', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
-//   { id: 29, name: 'Сбербанк', type: 'property', color: '#93bbf6', price: '2800', sellPrice: [1400, 2000, 3500, 5000, 6500], rent: [233, 3800, 9400, 12200, 15000], level: 1, logo: '/img/sber.png', description: 'Банки', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 7 },
-//   { id: 30, name: 'Злой полицейский', type: 'car', logo: '/img/police1.svg' },
-//   { id: 31, name: 'Saudi Aramco', type: 'property', color: '#a54bef', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 4300, 10900, 14200, 17500], level: 1, logo: '/img/sa.png', description: 'Добыча, переработка и экспорт ресурсов', country: 'Саудовская Аравия', countryImg: '/img/flags/sa.svg', relations: 9 },
-//   { id: 32, name: 'Shell', type: 'property', color: '#a54bef', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 4300, 10900, 14200, 17500], level: 1, logo: '/img/shell.png', description: 'Добыча, переработка и экспорт ресурсов', country: 'Великобритания', countryImg: '/img/flags/uk.svg', relations: 9 },
-//   { id: 33, name: 'Шанс', type: 'chance', logo: '/img/question.png' },
-//   { id: 34, name: 'Лукойл', type: 'property', color: '#a54bef', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 4300, 10900, 14200, 17500], level: 1, logo: '/img/l.png', description: 'Добыча, переработка и экспорт ресурсов', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 9 },
-//   { id: 35, name: 'Apple', type: 'property', color: '#292929', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 4000, 10000, 13000, 16000], level: 1, logo: '/img/train.svg', description: 'Электроника высокого уровня', country: 'США', countryImg: '/img/flags/usa.svg', relations: 8 },
-//   { id: 36, name: 'Налог на роскошь', type: 'tax2', logo: '/img/diamond.png' },
-//   { id: 37, name: 'Microsoft', type: 'property', color: '#d31a2c', price: '3400', sellPrice: [1700, 2300, 3800, 5300, 6800], rent: [283, 4400, 11200, 14600, 18000], level: 1, logo: '/img/MICROSOFT.png', description: 'Технологические монополисты, владеющие данными. Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
-//   { id: 38, name: 'Шанс', type: 'chance', logo: '/img/question.png' },
-//   { id: 39, name: 'Google', type: 'property', color: '#d31a2c', price: '3400', sellPrice: [1700, 2300, 3800, 5300, 6800], rent: [283, 4400, 11200, 14600, 18000], level: 1, logo: '/img/GOOGLE.png', description: 'Технологические монополисты, владеющие данными. Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
-// ]);
-const steps = ref([ 
+
+//sellPrice - 1 lvl - цена/2
+//sellPrice - 2 lvl - (цена/2)+600 
+//sellPrice - 3 lvl - (цена/2)+600+1500
+//sellPrice - 5 lvl - (цена/2)+600+1500+1500
+//rent - 1 lvl - цена/11
+//rent - 2 lvl - цена+1000
+//rent - 3 lvl - цена*3
+//rent - 4 lvl - цена*4
+//rent - 5 lvl - цена*5
+//исключение ренты только у мака
+//macrent - 1 lvl - цена/12
+//macrent - 2 lvl - цена+1000
+//macrent - 3 lvl - цена*3+1000
+//macrent  - 4 lvl - цена*4+1000
+//macrent  - 5 lvl - цена*5+1000
+const steps = ref([
   { id: 0, name: 'Start', type: 'start', logo: '/img/start.svg' },
-  { id: 1, name: 'Nike', type: 'property', color: '#e7a5e7', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/nike.svg', description: 'Спортивная одежда, обувь и аксессуары', country: 'США', countryImg: '/img/flags/usa.svg', relations: 1 },
-  { id: 2, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 3, name: 'Adidas', type: 'property', color: '#e7a5e7', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/ADIDAS.svg', description: 'Спортивная одежда, обувь и аксессуары', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 1},
-  { id: 4, name: 'Налог на доходы', type: 'tax', logo: '/img/money.svg'},
-  { id: 5, name: 'Apple', type: 'property', color: '#d31a2c', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 4000, 10000, 13000, 16000], level: 1, logo: '/img/APPLE.svg', description: 'Электроника высокого уровня', country: 'США', countryImg: '/img/flags/usa.svg', relations: 8 },
-  { id: 6, name: 'Facebook', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 3000, 7000, 9000, 11000], level: 1, logo: '/img/FACEBOOK.svg', description: 'Социальные интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
+  { id: 1, name: 'McDonald’s', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [55, 1600, 2800, 3400, 4000], level: 1, logo: '/img/mac.svg', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
+  { id: 2, name: 'Kfc', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [55, 1600, 2800, 3400, 4000], level: 1, logo: '/img/kfc.svg', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
+  { id: 3, name: 'Вкусно — и точка', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [55, 1600, 2800, 3400, 4000], level: 1, logo: '/img/vkusno.svg', description: 'Общественное питание', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 2 },
+  { id: 4, name: 'Налог на доходы', type: 'tax', logo: '/img/money.svg' },
+  { id: 5, name: 'Adidas', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [280, 500, 1000, 2000], logo: '/img/ADIDAS.svg', description: 'Одежда и аксессуары', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 1 },
+  { id: 6, name: 'Netflix', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [118, 2300, 3900, 5200, 6500], level: 1, logo: '/img/netflix.svg', description: 'Индустрия развлечений и медиа', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
   { id: 7, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 8, name: 'X', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 3000, 7000, 9000, 11000], level: 1, logo: '/img/X.svg', description: 'Социальные интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
-  { id: 9, name: 'Telegram', type: 'property', color: '#0d6efd', price: '2000', sellPrice: [1000, 1600, 3100, 4600, 6100], rent: [166, 3000, 7000, 9000, 11000], level: 1, logo: '/img/TELEGRAM.svg', description: 'Социальные интернет-сервисы', relations: 4 },
+  { id: 8, name: 'Warner Bros. Discovery', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [118, 2300, 3900, 5200, 6500], level: 1, logo: '/img/wb.svg', description: 'Индустрия развлечений и медиа', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
+  { id: 9, name: 'The Walt Disney Company', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [118, 2300, 3900, 5200, 6500], level: 1, logo: '/img/disney.svg', description: 'Индустрия развлечений и медиа', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
   { id: 10, name: 'Полицеский участок', type: 'jail', logo: '/img/jail.svg' },
-  { id: 11, name: 'Coca-Cola', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 2400, 5200, 6600, 8000], level: 1, logo: '/img/cc.svg', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-  { id: 12, name: 'McDonald’s', type: 'property', color: '#c35831', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 4900, 6200, 7500], level: 1, logo: '/img/mac.svg', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
-  { id: 13, name: 'Pepsi', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 2400, 5200, 6600, 8000], level: 1, logo: '/img/PEPSI.svg', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-  { id: 14, name: 'Dr Pepper', type: 'property', color: '#54d9cf', price: '1400', sellPrice: [700, 1300, 2800, 4300, 5800], rent: [116, 2400, 5200, 6600, 8000], level: 1, logo: '/img/dr.svg', description: 'Газированные безалкогольные напитки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-  { id: 15, name: 'Кофе-брейк', type: 'coffe', logo: '/img/coffe2.svg' },
-  { id: 16, name: 'Visa', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 7600, 9800, 12000], level: 1, logo: '/img/VISA.svg', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 5 },
-  { id: 17, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 18, name: 'Mastercard', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 7600, 9800, 12000], level: 1, logo: '/img/MASTERCARD.svg', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 5 },
-  { id: 19, name: 'Мир', type: 'property', color: '#ffcc00', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 7600, 9800, 12000], level: 1, logo: '/img/mir.svg', description: 'Платежные системы', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 5 },
+  { id: 11, name: 'Visa', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [155, 2700, 5100, 6800, 8500], level: 1, logo: '/img/VISA.svg', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
+  { id: 12, name: 'Mastercard', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [155, 2700, 5100, 6800, 8500], level: 1, logo: '/img/MASTERCARD.svg', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
+  { id: 13, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+  { id: 14, name: 'Мир', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [155, 2700, 5100, 6800, 8500], level: 1, logo: '/img/mir.svg', description: 'Платежные системы', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 4 },
+  { id: 15, name: 'Louis Vuitton', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [280, 500, 1000, 2000], logo: '/img/lv.svg', description: 'Одежда и аксессуары', country: 'Франция', countryImg: '/img/flags/france.svg', relations: 1 },
+  { id: 16, name: 'Toyota', type: 'property', color: '#262e83', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [200, 3200, 6600, 8800, 11000], level: 1, logo: '/img/TOYOTA.svg', description: 'Автомобили', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 6 },
+  { id: 17, name: 'Volkswagen', type: 'property', color: '#262e83', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [200, 3200, 6600, 8800, 11000], level: 1, logo: '/img/VOLKSWAGEN.svg', description: 'Автомобили', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 6 },
+  { id: 18, name: 'Lada', type: 'property', color: '#262e83', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [200, 3200, 6600, 8800, 11000], level: 1, logo: '/img/LADA.svg', description: 'Автомобили', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 6 },
+  { id: 19, name: 'Facebook', type: 'property', color: '#0d6efd', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [191, 3100, 5300, 7400, 9500], level: 1, logo: '/img/FACEBOOK.svg', description: 'Социальные интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 5 },
   { id: 20, name: 'Бесплатная парковка', type: 'park', logo: '/img/park.svg' },
-  { id: 21, name: 'Toyota', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 3600, 8800, 11400, 14000], level: 1, logo: '/img/TOYOTA.svg', description: 'Автомобили', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 6 },
-  { id: 22, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 23, name: 'Volkswagen', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 3600, 8800, 11400, 14000], level: 1, logo: '/img/VOLKSWAGEN.svg', description: 'Автомобили', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 6 },
-  { id: 24, name: 'Lada', type: 'property', color: '#198754', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [216, 3600, 8800, 11400, 14000], level: 1, logo: '/img/LADA.svg', description: 'Автомобили', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 6 },
-  { id: 25, name: 'Samsung', type: 'property', color: '#d31a2c', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 4000, 10000, 13000, 16000], level: 1, logo: '/img/SAMSUNG.svg', description: 'Электроника высокого уровня', country: 'Корея', countryImg: '/img/flags/korea.svg', relations: 8 },
-  { id: 26, name: 'Icbc', type: 'property', color: '#93bbf6', price: '2800', sellPrice: [1400, 2000, 3500, 5000, 6500], rent: [233, 3800, 9400, 12200, 15000], level: 1, logo: '/img/ICBC.svg', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
-  { id: 27, name: 'Ccb', type: 'property', color: '#93bbf6', price: '2800', sellPrice: [1400, 2000, 3500, 5000, 6500], rent: [233, 3800, 9400, 12200, 15000], level: 1, logo: '/img/CCB.svg', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
-  { id: 28, name: 'Kfc', type: 'property', color: '#c35831', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 4900, 6200, 7500], level: 1, logo: '/img/kfc.svg', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
-  { id: 29, name: 'Сбербанк', type: 'property', color: '#93bbf6', price: '2800', sellPrice: [1400, 2000, 3500, 5000, 6500], rent: [233, 3800, 9400, 12200, 15000], level: 1, logo: '/img/sber.svg', description: 'Банки', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 7 },
+  { id: 21, name: 'Telegram', type: 'property', color: '#0d6efd', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [191, 3100, 5300, 7400, 9500], level: 1, logo: '/img/TELEGRAM.svg', description: 'Социальные интернет-сервисы', relations: 5 },
+  { id: 22, name: 'Icbc', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [209, 3300, 6900, 9200, 11500], level: 1, logo: '/img/ICBC.svg', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
+  { id: 23, name: 'Ccb', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [209, 3300, 6900, 9200, 11500], level: 1, logo: '/img/CCB.svg', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
+  { id: 24, name: 'Сбербанк', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [209, 3300, 6900, 9200, 11500], level: 1, logo: '/img/sber.svg', description: 'Банки', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 7 },
+  { id: 25, name: 'Nike', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [280, 500, 1000, 2000], logo: '/img/nike.svg', description: 'Одежда и аксессуары', country: 'США', countryImg: '/img/flags/usa.svg', relations: 1 },
+  { id: 26, name: 'Samsung', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [227, 3500, 7500, 10000, 12500], level: 1, logo: '/img/SAMSUNG.svg', description: 'Электроника высокого уровня', country: 'Корея', countryImg: '/img/flags/korea.svg', relations: 8 },
+  { id: 27, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+  { id: 28, name: 'Xiaomi', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [227, 3500, 7500, 10000, 12500], level: 1, logo: '/img/xiaomi.svg', description: 'Электроника высокого уровня', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 8 },
+  { id: 29, name: 'Apple', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [227, 3500, 7500, 10000, 12500], level: 1, logo: '/img/APPLE.svg', description: 'Электроника высокого уровня', country: 'США', countryImg: '/img/flags/usa.svg', relations: 8 },
   { id: 30, name: 'Злой полицейский', type: 'car', logo: '/img/police1.svg' },
-  { id: 31, name: 'Saudi Aramco', type: 'property', color: '#a54bef', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 4300, 10900, 14200, 17500], level: 1, logo: '/img/sa.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Саудовская Аравия', countryImg: '/img/flags/sa.svg', relations: 9 },
-  { id: 32, name: 'Shell', type: 'property', color: '#a54bef', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 4300, 10900, 14200, 17500], level: 1, logo: '/img/shell.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Великобритания', countryImg: '/img/flags/uk.svg', relations: 9 },
+  { id: 31, name: 'Saudi Aramco', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [236, 3600, 7800, 10400, 13000], level: 1, logo: '/img/sa.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Саудовская Аравия', countryImg: '/img/flags/sa.svg', relations: 9 },
+  { id: 32, name: 'Shell', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [236, 3600, 7800, 10400, 13000], level: 1, logo: '/img/shell.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Великобритания', countryImg: '/img/flags/uk.svg', relations: 9 },
   { id: 33, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 34, name: 'Лукойл', type: 'property', color: '#a54bef', price: '3300', sellPrice: [1650, 2250, 3750, 5250, 6750], rent: [275, 4300, 10900, 14200, 17500], level: 1, logo: '/img/l.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 9 },
-  { id: 35, name: 'Xiaomi', type: 'property', color: '#d31a2c', price: '3000', sellPrice: [1500, 2100, 3600, 5100, 6600], rent: [250, 4000, 10000, 13000, 16000], level: 1, logo: '/img/xiaomi.svg', description: 'Электроника высокого уровня', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 8 },
+  { id: 34, name: 'Лукойл', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [236, 3600, 7800, 10400, 13000], level: 1, logo: '/img/l.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 9 },
+  { id: 35, name: 'Gucci', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [280, 500, 1000, 2000], logo: '/img/gucci.svg', description: 'Одежда и аксессуары', country: 'Италия', countryImg: '/img/flags/italy.svg', relations: 1 },
   { id: 36, name: 'Налог на роскошь', type: 'tax2', logo: '/img/diamond.svg' },
-  { id: 37, name: 'Microsoft', type: 'property', color: '#292929', price: '3400', sellPrice: [1700, 2300, 3800, 5300, 6800], rent: [283, 4400, 11200, 14600, 18000], level: 1, logo: '/img/MICROSOFT.svg', description: 'Технологические монополисты, владеющие данными. Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
+  { id: 37, name: 'Microsoft', type: 'property', color: '#292929', price: '3100', sellPrice: [1550, 2150, 3650, 5150, 6650], rent: [282, 4100, 8300, 11400, 12500], level: 1, logo: '/img/MICROSOFT.svg', description: 'Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
   { id: 38, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 39, name: 'Google', type: 'property', color: '#292929', price: '3400', sellPrice: [1700, 2300, 3800, 5300, 6800], rent: [283, 4400, 11200, 14600, 18000], level: 1, logo: '/img/GOOGLE.svg', description: 'Технологические монополисты, владеющие данными. Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
+  { id: 39, name: 'Google', type: 'property', color: '#292929', price: '3100', sellPrice: [1550, 2150, 3650, 5150, 6650], rent: [282, 4100, 8300, 11400, 12500], level: 1, logo: '/img/GOOGLE.svg', description: 'Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
 ]);
+
+const getCurrentRent = (cell) => {
+  if (!cell.owner) return cell.price; // Если не куплено, показываем цену покупки
+
+  if (cell.type === 'train') {
+    // Логика для железных дорог:
+    // Считаем, сколько полей типа train у того же владельца
+    const ownerId = cell.owner;
+    const ownedTrains = steps.value.filter(s => s.type === 'train' && s.owner === ownerId).length;
+    
+    // Рента берется из массива в зависимости от количества (1 дорога = rent[0], 2 = rent[1] и т.д.)
+    return cell.rent[ownedTrains - 1] || cell.rent[0];
+  }
+
+  // Логика для обычных полей (по уровню домов)
+  return cell.rent[cell.level - 1];
+};
 
 const handleBankrupt = (actor) => {
   // Устанавливаем статус банкрота
@@ -569,7 +580,10 @@ const handleBankrupt = (actor) => {
         steps.value.forEach(s => {
           if (s.owner === actor.id) {
             s.owner = null;
-            s.level = 1;
+      // Сбрасываем уровень только для обычной недвижимости
+      if (s.type === 'property') {
+        s.level = 1;
+      }
           }
         });
 
@@ -578,43 +592,69 @@ const handleBankrupt = (actor) => {
 }
 
 const processTax = (actor, amount) => {
-  // 1. Считаем, может ли игрок в принципе оплатить налог (деньги + всё имущество)
+  // 1. Считаем активы (деньги + всё имущество)
   const myProperties = steps.value.filter(s => s.owner === actor.id);
-  const totalAssets = myProperties.reduce((sum, p) => sum + parseInt(p.sellPrice[p.level - 1]), 0);
+  const totalAssets = myProperties.reduce((sum, p) => {
+    const price = p.sellPrice ? parseInt(p.sellPrice[p.level - 1]) : Math.floor(parseInt(p.price) / 2);
+    return sum + price;
+  }, 0);
+  
   const totalWealth = parseInt(actor.balance) + totalAssets;
 
   if (totalWealth < amount) {
-    // Сценарий мгновенного банкротства (даже если всё продаст — не хватит)
-    addLog(`У ${actor.name} нет средств на оплату! Банкротство.`);
-    handleBankrupt(actor); // Используем общую функцию очистки игрока
+    addLog(`У ${actor.name} недостаточно средств для уплаты налогов!`);
+    handleBankrupt(actor);
     return;
   }
 
-  // 2. Если активов хватает, запускаем процесс продажи (ваш цикл while)
+  // 2. Если активов хватает, запускаем процесс продажи
   while (parseInt(actor.balance) < amount) {
     const currentProps = steps.value.filter(s => s.owner === actor.id);
-    // Продаем самое дешевое (уровень 1) в первую очередь
-    const propertyToSell = currentProps.sort((a, b) => a.level - b.level)[0];
-    
-    const sellPrice = parseInt(propertyToSell.sellPrice[propertyToSell.level - 1]);
+    if (currentProps.length === 0) break;
+
+    // --- УМНАЯ ЛОГИКА ПРИОРИТЕТОВ ПРОДАЖИ ---
+    // Сначала пустые участки (level 1), потом вокзалы (train), потом всё остальное
+    let propertyToSell = currentProps.find(p => p.type === 'property' && p.level === 1);
+
+    if (!propertyToSell) {
+      propertyToSell = currentProps.find(p => p.type === 'train');
+    }
+
+    if (!propertyToSell) {
+      propertyToSell = [...currentProps].sort((a, b) => a.level - b.level)[0];
+    }
+
+    // Рассчитываем цену продажи
+    const currentIdx = propertyToSell.level - 1;
+    const sellPrice = (propertyToSell.sellPrice && propertyToSell.sellPrice[currentIdx]) 
+                      ? parseInt(propertyToSell.sellPrice[currentIdx]) 
+                      : Math.floor(parseInt(propertyToSell.price) / 2);
+
     actor.balance = (parseInt(actor.balance) + sellPrice).toString();
     
-    addLog(`${actor.name} продал ${propertyToSell.name} за ${sellPrice}k`);
+    addLog(`${actor.name} продал ${propertyToSell.name} за ${sellPrice}k для оплаты налога`);
     
+    // Сброс владельца и уровня
     propertyToSell.owner = null;
-    propertyToSell.level = 1;
+    if (propertyToSell.type === 'property') {
+      propertyToSell.level = 1;
+    }
   }
 
   // 3. Финальное списание
   actor.balance = (parseInt(actor.balance) - amount).toString();
-  addLog(`Действие оплачено. Текущий баланс ${actor.name}: ${actor.balance}k`);
+  addLog(`Налог оплачен. Баланс ${actor.name}: ${actor.balance}k`);
   
-  // 4. После налога ход всегда завершается
+  // 4. Завершение хода
   nextTurn();
 };
 
+
 const getPropertyFullValue = (cell) => {
   if (!cell || !cell.price) return 0;
+  if (cell.type === 'train') {
+    return cell.sellPrice ? parseInt(cell.sellPrice[0]) : Math.floor(parseInt(cell.price) / 2);
+  }
   // Базовая цена + цена продажи для текущего уровня
   const basePrice = parseInt(cell.price);
   if(cell.level <= 1) {
@@ -845,11 +885,11 @@ const sellToBank = (property) => {
     return;
   }
 
-    const player = currentPlayer.value;
-
-    const currentLevel = property.level; 
-  const priceIndex = currentLevel - 1;
-  const finalSellPrice = property.sellPrice[priceIndex];
+  const priceIndex = property.level - 1;
+  // Берем цену из массива, либо считаем 50% от стоимости покупки (как запасной вариант)
+  const finalSellPrice = (property.sellPrice && property.sellPrice[priceIndex]) 
+    ? parseInt(property.sellPrice[priceIndex]) 
+    : Math.floor(parseInt(property.price) / 2);
     
     // Прибавляем деньги к балансу игрока
   currentPlayer.value.balance = (parseInt(currentPlayer.value.balance) + parseInt(finalSellPrice)).toString();
@@ -859,7 +899,9 @@ const sellToBank = (property) => {
 
   // Сбрасываем данные объекта
   property.owner = null;
-  property.level = 1; // Возвращаем на начальный уровень для следующего покупателя
+  if (property.type === 'property') {
+    property.level = 1;
+  }
   
   // Закрываем окно осмотра карточки
   if (typeof closeInspect === 'function') closeInspect();
@@ -954,11 +996,22 @@ const payFine = () => {
     // Если имущества больше нет, а денег всё еще не хватает — выходим из цикла
     if (myProperties.length === 0) break;
 
-    // Сортируем: сначала продаем объекты с низким уровнем (без домов), чтобы спасти прокачанные
-    const propertyToSell = myProperties.sort((a, b) => a.level - b.level)[0];
+    let propertyToSell = myProperties.find(p => p.type === 'property' && p.level === 1);
+
+    // 2. Если таких нет, ищем железные дороги (train)
+    if (!propertyToSell) {
+      propertyToSell = myProperties.find(p => p.type === 'train');
+    }
+
+    if (!propertyToSell) {
+      propertyToSell = [...myProperties].sort((a, b) => a.level - b.level)[0];
+    }
 
     // Получаем цену продажи для текущего уровня объекта
-    const sellPrice = propertyToSell.sellPrice[propertyToSell.level - 1];
+   const currentIdx = propertyToSell.level - 1;
+    const sellPrice = (propertyToSell.sellPrice && propertyToSell.sellPrice[currentIdx]) 
+                      ? parseInt(propertyToSell.sellPrice[currentIdx]) 
+                      : Math.floor(parseInt(propertyToSell.price) / 2);
     
     // Прибавляем деньги к балансу
     actor.balance = (parseInt(actor.balance) + parseInt(sellPrice)).toString();
@@ -967,7 +1020,9 @@ const payFine = () => {
     
     // Сбрасываем объект
     propertyToSell.owner = null;
-    propertyToSell.level = 1;
+    if (propertyToSell.type === 'property') {
+      propertyToSell.level = 1; 
+    }
   }
 
   // --- ПРОВЕРКА РЕЗУЛЬТАТА ---
@@ -1117,8 +1172,8 @@ const removeNotification = (id) => {
             :class="{ 'has-price': cell.price, 'owned': cell.owner }" 
             :style="{ gridColumn: i + 1, gridRow: 1, backgroundColor: getCellBg(cell), cursor: cell.price ? 'pointer' : 'default' }"
             @click="handleCellClick(cell)">
-            <div v-if="cell.price" class="price-tag p-top" :style="{ background: cell.color }">{{ cell.owner ? cell.rent[cell.level - 1] : cell.price }}k 
-              <span class="price-tag-crown" v-if="cell.level - 1 != 0">
+            <div v-if="cell.price" class="price-tag p-top" :style="{ background: cell.color }">{{ cell.owner ? cell.type == 'train' ? getCurrentRent(cell) : cell.rent[cell.level - 1] : cell.price }}k 
+              <span class="price-tag-crown" v-if="(cell.level - 1 != 0) && cell.type != 'train'">
               <img class="price-tag-crown-img" src="/img/star.svg" alt="">
             </span>
           </div>
@@ -1142,8 +1197,8 @@ const removeNotification = (id) => {
             :class="{ 'owned': cell.owner }" 
             :style="{ gridColumn: 11, gridRow: i + 2, backgroundColor: getCellBg(cell), cursor: cell.price ? 'pointer' : 'default' }"
             @click="handleCellClick(cell)">
-            <div v-if="cell.price" class="price-tag p-right" :style="{ background: cell.color }">{{ cell.owner ? cell.rent[cell.level - 1] : cell.price }}k
-                <span class="price-tag-crown" v-if="cell.level - 1 != 0">
+            <div v-if="cell.price" class="price-tag p-right" :style="{ background: cell.color }">{{ cell.owner ? cell.type == 'train' ? getCurrentRent(cell) : cell.rent[cell.level - 1] : cell.price }}k
+               <span class="price-tag-crown" v-if="(cell.level - 1 != 0) && cell.type != 'train'">
               <img class="price-tag-crown-img" src="/img/star.svg" alt="">
             </span>
             </div>
@@ -1163,8 +1218,8 @@ const removeNotification = (id) => {
             :class="{ 'has-price': cell.price, 'owned': cell.owner }" 
             :style="{ gridColumn: 11 - i, gridRow: 11, backgroundColor: getCellBg(cell), cursor: cell.price ? 'pointer' : 'default' }"
             @click="handleCellClick(cell)">
-            <div v-if="cell.price" class="price-tag p-bottom" :style="{ background: cell.color }">{{ cell.owner ? cell.rent[cell.level - 1] : cell.price }}k
-                <span class="price-tag-crown" v-if="cell.level - 1 != 0">
+            <div v-if="cell.price" class="price-tag p-bottom" :style="{ background: cell.color }">{{ cell.owner ? cell.type == 'train' ? getCurrentRent(cell) : cell.rent[cell.level - 1] : cell.price }}k
+               <span class="price-tag-crown" v-if="(cell.level - 1 != 0) && cell.type != 'train'">
               <img class="price-tag-crown-img" src="/img/star.svg" alt="">
             </span>
             </div>
@@ -1184,8 +1239,8 @@ const removeNotification = (id) => {
             :class="{ 'owned': cell.owner }" 
             :style="{ gridColumn: 1, gridRow: 11 - (i + 1), backgroundColor: getCellBg(cell), cursor: cell.price ? 'pointer' : 'default' }"
             @click="handleCellClick(cell)">
-            <div v-if="cell.price" class="price-tag p-left" :style="{ background: cell.color }">{{ cell.owner ? cell.rent[cell.level - 1] : cell.price }}k
-                <span class="price-tag-crown" v-if="cell.level - 1 != 0">
+            <div v-if="cell.price" class="price-tag p-left" :style="{ background: cell.color }">{{ cell.owner ? cell.type == 'train' ? getCurrentRent(cell) : cell.rent[cell.level - 1] : cell.price }}k
+              <span class="price-tag-crown" v-if="(cell.level - 1 != 0) && cell.type != 'train'">
               <img class="price-tag-crown-img" src="/img/star.svg" alt="">
             </span>
             </div>
@@ -1317,8 +1372,22 @@ const removeNotification = (id) => {
                   </div>
                   <div class="property-body">
                     <div class="buy-price"><div class='buy-price-left'>Стоимость поля</div> <div>{{ activeDisplayCard.price }}k</div></div>
-                    <div v-for="(rent, idx) in activeDisplayCard.rent" :key="idx" class="buy-price">
+                    <div v-for="(rent, idx) in activeDisplayCard.rent" :key="idx" class="buy-price" v-if="activeDisplayCard.type != 'train'">
                       <div class='buy-price-left'>Рента {{ idx + 1 }} ур.</div> <div>{{ rent }}k</div>
+                    </div>
+                    <div v-else-if="activeDisplayCard.type == 'train'">
+                    <div class="buy-price">
+                      <div class='buy-price-left'>Рента за владение одним объектом</div> <div>{{ activeDisplayCard.rent[0] }}k</div>
+                    </div>
+                    <div class="buy-price">
+                     <div class='buy-price-left'>Рента за владение двумя объектами</div> <div>{{ activeDisplayCard.rent[1] }}k</div>
+                    </div>
+                    <div class="buy-price">
+                     <div class='buy-price-left'>Рента за владение тремя объектами</div> <div>{{ activeDisplayCard.rent[2] }}k</div>
+                    </div>
+                    <div class="buy-price">
+                     <div class='buy-price-left'>Рента за владение четырьмя объектами</div> <div>{{ activeDisplayCard.rent[3] }}k</div>
+                    </div>
                     </div>
 
                     <div v-if="activeDisplayCard.country" class="buy-price country">
@@ -1339,16 +1408,16 @@ const removeNotification = (id) => {
                     <div v-else-if="inspectedProperty" class="inspect-actions">
                       <div v-if="inspectedProperty.owner === currentPlayer.id && currentPlayer.active" class="inspect-actions-footer">
                         <button 
-                          v-if="inspectedProperty.level < 5 && isMonopolyCollected(inspectedProperty)"
+                          v-if="inspectedProperty.level < 5 && isMonopolyCollected(inspectedProperty) && inspectedProperty.type != 'train'"
                           @click="upgradeProperty(inspectedProperty)"
                           class="upgrade-btn"
                           :disabled="upgradedThisTurn.includes(inspectedProperty.id)"
                         >
-                          <span v-if="upgradedThisTurn.includes(inspectedProperty.id)">Уже улучшено</span>
+                          <span v-if="upgradedThisTurn.includes(inspectedProperty.id) && inspectedProperty.type != 'train'">Уже улучшено</span>
                           <span v-else>Улучшить ({{ inspectedProperty.level === 1 ? 600 : 1500 }}k)</span>
                         </button>
-                        <div v-else-if="inspectedProperty.level < 5" class="monopoly-hint">Соберите монополию для улучшения</div>
-                        <div v-if="inspectedProperty.level >= 5" class="max-level-badge">Максимальный уровень</div>
+                        <div v-else-if="inspectedProperty.level < 5 && inspectedProperty.type != 'train'" class="monopoly-hint">Соберите монополию для улучшения</div>
+                        <div v-if="inspectedProperty.level >= 5 && inspectedProperty.type != 'train'" class="max-level-badge">Максимальный уровень</div>
                         <button @click="sellToBank(inspectedProperty)" class="sell-btn-alt">Продать за {{ inspectedProperty.sellPrice[inspectedProperty.level - 1] }}k</button>
                       </div>
                       <button class="action-button close-btn" @click="closeInspect">Закрыть</button>
@@ -1426,11 +1495,13 @@ const removeNotification = (id) => {
   width: 90vh; height: 90vh; background: #333; gap: 2px; border: 4px solid #333; position: relative;
 }
 .monopoly-grid.full { 
-  width: 82vh;
-  height: 82vh;
+  width: 84vh;
+  height: 84vh;
 }
 
 .cell { background: #fff; position: relative; display: flex; flex-direction: column; overflow: hidden; transition: background-color 0.4s; }
+.cell.train .price-tag { background-color: white !important; color: black !important; font-weight: 600; }
+/* .cell.train .p-top { border-top: 2px solid #333; } */
 .cell-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px; }
 .cell-logo { max-width: 85%; max-height: 65%; object-fit: contain; 
   image-rendering: crisp-edges;
@@ -1541,9 +1612,11 @@ const removeNotification = (id) => {
 
 .property-buy-card { display: flex; flex-direction: column; }
 .property-header { position: relative; width: 100%; padding: 10px; color: white; border-radius: 5px; margin-bottom: 15px; font-weight: bold; }
-.property-description{ font-weight: 300; font-size: 12px; padding-right: 40px; max-width: 400px; }
+.property-description{ font-weight: 300; font-size: 12px; padding-right: 40px; max-width: 400px; margin-top: 2px; }
 .property-title{ font-size: 16px; margin: 0; }
-.buy-logo { max-width: 50px; height: auto; object-fit: contain; position: absolute; right: 10px; top: 10px; }
+.buy-logo { max-width: 42px; height: auto; object-fit: contain; position: absolute; right: 10px; top: 10px;     background: #ffffff;
+    padding: 4px;
+    border-radius: 5px; }
 .buy-price { font-size: 14px; margin-bottom: 6px; color: #333333; display: flex; justify-content: space-between; font-weight: 500; }
 .buy-price.country .buy-price-right{ display: flex; align-items: center; gap: 6px; }
 .buy-price-left{ color: #757575; }
