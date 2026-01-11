@@ -30,6 +30,19 @@ const phrases = ref([
   "Ваша бизнес-империя ждет Вашего шага...",
 ])
 
+
+const isSurvivalMode = computed(() => {
+  // Если 4 или 5 игроков — режим включается после 150 ходов
+  if (playerCount.value > 4 && turnCount.value > 150) return true;
+  if (playerCount.value === 4 && turnCount.value > 120) return true;
+  // Если 3 игрока — режим включается после 150 ходов
+  if (playerCount.value === 3 && turnCount.value > 100) return true;
+  if (playerCount.value === 2 && turnCount.value > 80) return true;
+  
+  return false;
+});
+
+
 const chanceCards = ref([
   {
     title: 'Вы решили доказать, что казино всегда проигрывает. Убыток 1300к',
@@ -316,17 +329,6 @@ const rotations = {
   1: { x: 0, y: 0 }, 2: { x: 0, y: -90 }, 3: { x: 0, y: -180 },
   4: { x: 0, y: 90 }, 5: { x: 90, y: 0 }, 6: { x: -90, y: 0 }
 };
-
-const isSurvivalMode = computed(() => {
-  // Если 4 или 5 игроков — режим включается после 150 ходов
-  if (playerCount.value > 4 && turnCount.value > 150) return true;
-  if (playerCount.value === 4 && turnCount.value > 120) return true;
-  // Если 3 игрока — режим включается после 150 ходов
-  if (playerCount.value === 3 && turnCount.value > 100) return true;
-  if (playerCount.value === 2 && turnCount.value > 80) return true;
-  
-  return false;
-});
 
 watch(isSurvivalMode, (isActivated) => {
   if (isActivated) {
