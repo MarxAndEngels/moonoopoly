@@ -41,7 +41,7 @@ const router = useRouter();
 const gameModes = [
   { 
     count: 2, 
-    survivalAfter: 100,
+    survivalAfter: 80,
     previewPlayers: [
       { icon: '/img/hero/animal-1.svg', color: '#ff4d4d' },
       { icon: '/img/hero/animal-4.svg', color: '#ffa500' }
@@ -58,7 +58,7 @@ const gameModes = [
   },
   { 
     count: 4, 
-    survivalAfter: 120,
+    survivalAfter: 115,
     previewPlayers: [
       { icon: '/img/hero/animal-1.svg', color: '#ff4d4d' },
       { icon: '/img/hero/animal-4.svg', color: '#ffa500' },
@@ -68,7 +68,7 @@ const gameModes = [
   },
   { 
     count: 5, 
-    survivalAfter: 150,
+    survivalAfter: 130,
     previewPlayers: [
       { icon: '/img/hero/animal-1.svg', color: '#ff4d4d' },
       { icon: '/img/hero/animal-4.svg', color: '#ffa500' },
