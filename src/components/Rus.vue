@@ -129,13 +129,13 @@ const setRandomPhrase = () => {
 };
 
 const players = ref([
-  { id: 1, name: 'Игрок 1', balance: '17000', color: '#ff4d4d', avatar: '/img/hero/animal-1.svg', position: 0, active: true, incomingTrade: null,isInJail: false, jailTurns: 0 },
-  { id: 2, name: 'Игрок 2', balance: '17000',  color: '#ffa500', avatar: '/img/hero/animal-4.svg',  position: 0, active: false, incomingTrade: null ,isInJail: false, jailTurns: 0
+  { id: 1, name: 'Игрок 1', balance: '17000', color: '#ff4d4d', avatar: '/img/hero/animal-8.svg', position: 0, active: true, incomingTrade: null,isInJail: false, jailTurns: 0 },
+  { id: 2, name: 'Игрок 2', balance: '17000',  color: '#ffa500', avatar: '/img/hero/animal-9.svg',  position: 0, active: false, incomingTrade: null ,isInJail: false, jailTurns: 0
    },
-  { id: 3, name: 'Игрок 3', balance: '17000', color: '#68d391', avatar: '/img/hero/animal-3.svg', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0
+  { id: 3, name: 'Игрок 3', balance: '17000', color: '#68d391', avatar: '/img/hero/animal-6.svg', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0
    },
-  { id: 4, name: 'Игрок 4', balance: '17000', color: '#4d94ff', avatar: '/img/hero/animal-2.svg', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0 },
-  { id: 5, name: 'Игрок 5', balance: '17000', color: '#b06ee6', avatar: '/img/hero/animal-5.svg', position: 0, active: false, incomingTrade: null, isInJail: false, jailTurns: 0 }
+  { id: 4, name: 'Игрок 4', balance: '17000', color: '#4d94ff', avatar: '/img/hero/animal-7.svg', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0 },
+  { id: 5, name: 'Игрок 5', balance: '17000', color: '#b06ee6', avatar: '/img/hero/animal-10.svg', position: 0, active: false, incomingTrade: null, isInJail: false, jailTurns: 0 }
 ]);
 
 const activePlayers = computed(() => players.value.slice(0, playerCount.value));
@@ -400,7 +400,7 @@ if (currentStep.type === 'tax2') {
 }
   
   if (currentStep.type === 'park') {
-   addLog(`Время отдыха! Вы припарковались в удачном месте. Наслаждайтесь тишиной, пока остальные тратят деньги на аренду.`);
+   addLog(`Время отдыха! Вы посетили Храм Василия Блаженного. Наслаждайтесь красотой, пока остальные тратят деньги на аренду.`);
   }
   if (currentStep.type === 'coffe') {
    addLog(`Кофе-брейк — время выпить латте, пока весь мир подождет.`);
@@ -517,45 +517,45 @@ const sellPrice = (propertyToSell.sellPrice && propertyToSell.sellPrice[currentL
 //macrent  - 4 lvl - цена*4+1000
 //macrent  - 5 lvl - цена*5+1000
 const steps = ref([
-  { id: 0, name: 'Start', type: 'start', logo: '/img/start.svg' },
+  { id: 0, name: 'Start', type: 'start', logo: '/img/start-rus.svg' },
   { id: 1, name: 'Вкусно — и точка', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/vkusno.svg', description: 'Общественное питание', relations: 2 },
   { id: 2, name: 'Rostic’s', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/rostic.svg', description: 'Общественное питание', relations: 2 },
   { id: 3, name: 'Додо Пицца', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/dodo.svg', description: 'Общественное питание', relations: 2 },
-  { id: 4, name: 'Налог на доходы', type: 'tax', logo: '/img/money.svg' },
+  { id: 4, name: 'Налог на доходы', type: 'tax', logo: '/img/money-rus.svg' },
   { id: 5, name: 'Telegram', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/TELEGRAM.svg', description: 'Цифровые коммуникации и медиа', relations: 1 },
   { id: 6, name: 'DNS', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/dns.svg', description: 'Розничная торговля техникой',  relations: 3 },
-  { id: 7, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+  { id: 7, name: 'Шанс', type: 'chance', logo: '/img/question-rus.svg' },
   { id: 8, name: 'Ситилинк', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/citilink.svg', description: 'Розничная торговля техникой', relations: 3 },
   { id: 9, name: 'М.Видео', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/mvidia.svg', description: 'Розничная торговля техникой', relations: 3 },
-  { id: 10, name: 'Полицеский участок', type: 'jail', logo: '/img/jail.svg' },
+  { id: 10, name: 'Полицеский участок', type: 'jail', logo: '/img/jail-rus.svg' },
   { id: 11, name: 'Мегафон', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/megafon.svg', description: 'Телекоммуникации и сотовая связь', relations: 4 },
   { id: 12, name: 'МТС', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/mts.svg', description: 'Телекоммуникации и сотовая связь', relations: 4 },
-  { id: 13, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+  { id: 13, name: 'Шанс', type: 'chance', logo: '/img/question-rus.svg' },
   { id: 14, name: 'Билайн', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/bilane.svg', description: 'Телекоммуникации и сотовая связь', relations: 4 },
   { id: 15, name: 'Max', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/max.svg', description: 'Цифровые коммуникации и медиа', relations: 1 },
   { id: 16, name: 'Магнит', type: 'property', color: '#a51f67', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [175, 3100, 5300, 7400, 9500], level: 1, logo: '/img/magnit.svg', description: 'Розничная торговля продуктами', relations: 6 },
   { id: 17, name: 'Пятёрочка', type: 'property', color: '#a51f67', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [175, 3100, 5300, 7400, 9500], level: 1, logo: '/img/piaterka.svg', description: 'Розничная торговля продуктами', relations: 6 },
   { id: 18, name: 'Лента', type: 'property', color: '#a51f67', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [175, 3100, 5300, 7400, 9500], level: 1, logo: '/img/lenta.svg', description: 'Розничная торговля продуктами', relations: 6 },
   { id: 19, name: 'Ozon', type: 'property', color: '#a73afd', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [192, 3300, 6900, 9200, 11500], level: 1, logo: '/img/ozon.svg', description: 'Маркетплейсы', relations: 5 },
-  { id: 20, name: 'Бесплатная парковка', type: 'park', logo: '/img/park.svg' },
+  { id: 20, name: 'Храм Василия Блаженного', type: 'park', logo: '/img/park-rus.svg' },
   { id: 21, name: 'Wildberries', type: 'property', color: '#a73afd', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [192, 3300, 6900, 9200, 11500], level: 1, logo: '/img/wildberis.svg', description: 'Маркетплейсы', relations: 5 },
   { id: 22, name: 'Каспийский трубопроводный консорциум', type: 'property', color: '#0d6efd', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 6600, 8800, 11000], level: 1, logo: '/img/ktk.svg', description: 'Нефтепроводная инфраструктура', relations: 7 },
   { id: 23, name: 'Транснефть', type: 'property', color: '#0d6efd', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 6600, 8800, 11000], level: 1, logo: '/img/transneft.svg', description: 'Нефтепроводная инфраструктура',  relations: 7 },
   { id: 24, name: 'Российские железные дороги', type: 'property', color: '#0d6efd', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 6600, 8800, 11000], level: 1, logo: '/img/rzd.svg', description: 'Транспортная инфраструктура',  relations: 7 },
   { id: 25, name: 'ВКонтакте', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/vk.svg', description: 'Цифровые коммуникации и медиа', relations: 1 },
   { id: 26, name: 'Северсталь', type: 'property', color: '#BF360C', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/severstal.svg', description: 'Добыча и металлургия. Производитель широкого спектра стальной продукции. Занимается добычей железной руды, коксующегося угля и других полезные ископаемых', relations: 8 },
-  { id: 27, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+  { id: 27, name: 'Шанс', type: 'chance', logo: '/img/question-rus.svg' },
   { id: 28, name: 'Норникель', type: 'property', color: '#BF360C', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/nornikel.svg', description: 'Добыча и металлургия. Крупнейший в мире производитель никеля и палладия. Производит также платину, медь, серебро, золото, кобальт и другие цветные металлы', relations: 8 },
   { id: 29, name: 'Полюс', type: 'property', color: '#BF360C', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/polus.svg', description: 'Добыча и металлургия. Золотодобывающая компания', relations: 8 },
   { id: 30, name: 'Злой полицейский', type: 'car', logo: '/img/police1.svg' },
   { id: 31, name: 'Сургутнефтегаз', type: 'property', color: '#292929', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/surgetneftegaz.svg', description: 'Нефтегазовый сектор', relations: 9 },
   { id: 32, name: 'Газпром', type: 'property', color: '#292929', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/gazprom.svg', description: 'Нефтегазовый сектор',  relations: 9 },
-  { id: 33, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+  { id: 33, name: 'Шанс', type: 'chance', logo: '/img/question-rus.svg' },
   { id: 34, name: 'Роснефть', type: 'property', color: '#292929', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/rosneft.svg', description: 'Нефтегазовый сектор',  relations: 9 },
   { id: 35, name: 'Одноклассники', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/ok.svg', description: 'Цифровые коммуникации и медиа', relations: 1 },
-  { id: 36, name: 'Налог на роскошь', type: 'tax2', logo: '/img/diamond.svg' },
+  { id: 36, name: 'Налог на роскошь', type: 'tax2', logo: '/img/diamond-rus.svg' },
   { id: 37, name: 'ВТБ', type: 'property', color: '#198754', price: '3100', sellPrice: [1550, 2150, 3650, 5150, 6650], rent: [258, 4100, 8300, 11400, 12500], level: 1, logo: '/img/vtb.svg', description: 'Банки',  relations: 10 },
-  { id: 38, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+  { id: 38, name: 'Шанс', type: 'chance', logo: '/img/question-rus.svg' },
   { id: 39, name: 'Сбербанк', type: 'property', color: '#198754', price: '3100', sellPrice: [1550, 2150, 3650, 5150, 6650], rent: [258, 4100, 8300, 11400, 12500], level: 1, logo: '/img/sber.svg', description: 'Банки',  relations: 10 },
 ]);
 
@@ -1182,7 +1182,7 @@ const removeNotification = (id) => {
             </span>
           </div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' }]">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' || cell.type === 'jail' || cell.type === 'start' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -1207,7 +1207,7 @@ const removeNotification = (id) => {
             </span>
             </div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' }]">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' || cell.type === 'jail' || cell.type === 'start' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -1228,7 +1228,7 @@ const removeNotification = (id) => {
             </span>
             </div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' }]">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' || cell.type === 'jail' || cell.type === 'start' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -1249,7 +1249,7 @@ const removeNotification = (id) => {
             </span>
             </div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' }]">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' || cell.type === 'jail' || cell.type === 'start' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -1514,7 +1514,7 @@ const removeNotification = (id) => {
 
   image-rendering: pixelated;
  }
-.cell-logo.logo-small { max-width: 75%; max-height: 55%; }
+.cell-logo.logo-small { max-width: 100%; max-height: 85%;     min-width: 46px; }
 .cell-name { font-size: 10px; font-weight: bold; text-align: center; color: #333; }
 
 .top-cell.has-price .cell-content { transform: translateY(-6px); }
@@ -1571,7 +1571,7 @@ const removeNotification = (id) => {
 .bottom { transform: rotateX(-90deg) translateZ(30px); }
 
 .action-button { background: #20a698; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; transition: all 0.3s; }
-.action-button:disabled { background: #555; cursor: not-allowed; opacity: 0.7; }
+.action-button:disabled { background: #555; cursor: not-allowed; opacity: 0.7; pointer-events: none; }
 .close-btn { background: #6c757d; margin-top: 6px; }
 
 .game-logs { background: rgba(0,0,0,0.5); color: #ccc; padding: 10px; height: 120px; overflow-y: auto; font-size: 14px; border-radius: 5px; text-align: left; scrollbar-width: thin;          /* Для Firefox */
@@ -2043,6 +2043,7 @@ const removeNotification = (id) => {
 }
 .jail-police-image{
   max-width: 160px;
+    min-width: 112px;
 }
 
 .notification-container {

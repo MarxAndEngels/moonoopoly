@@ -130,7 +130,7 @@ const setRandomPhrase = () => {
 
 const players = ref([
   { id: 1, name: 'Игрок 1', balance: '17000', color: '#ff4d4d', avatar: '/img/hero/animal-1.svg', position: 0, active: true, incomingTrade: null,isInJail: false, jailTurns: 0 },
-  { id: 2, name: 'Игрок 2', balance: '17000',  color: '#ffaa00', avatar: '/img/hero/animal-4.svg',  position: 0, active: false, incomingTrade: null ,isInJail: false, jailTurns: 0
+  { id: 2, name: 'Игрок 2', balance: '17000',  color: '#ffa500', avatar: '/img/hero/animal-4.svg',  position: 0, active: false, incomingTrade: null ,isInJail: false, jailTurns: 0
    },
   { id: 3, name: 'Игрок 3', balance: '17000', color: '#68d391', avatar: '/img/hero/animal-3.svg', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0
    },
@@ -518,45 +518,45 @@ const sellPrice = (propertyToSell.sellPrice && propertyToSell.sellPrice[currentL
 //macrent  - 5 lvl - цена*5+1000
 const steps = ref([
   { id: 0, name: 'Start', type: 'start', logo: '/img/start.svg' },
-  { id: 1, name: 'McDonald’s', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/mac.svg', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
-  { id: 2, name: 'Kfc', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/kfc.svg', description: 'Общественное питание', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
-  { id: 3, name: 'Вкусно — и точка', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/vkusno.svg', description: 'Общественное питание', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 2 },
-  { id: 4, name: 'Налог на доходы', type: 'tax', logo: '/img/money.svg' },
-  { id: 5, name: 'Adidas', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/ADIDAS.svg', description: 'Одежда и аксессуары', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 1 },
-  { id: 6, name: 'Netflix', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/netflix.svg', description: 'Индустрия развлечений и медиа', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-  { id: 7, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 8, name: 'Warner Bros. Discovery', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/wb.svg', description: 'Индустрия развлечений и медиа', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-  { id: 9, name: 'The Walt Disney Company', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/disney.svg', description: 'Индустрия развлечений и медиа', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
-  { id: 10, name: 'Полицеский участок', type: 'jail', logo: '/img/jail.svg' },
-  { id: 11, name: 'Visa', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/VISA.svg', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
-  { id: 12, name: 'Mastercard', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/MASTERCARD.svg', description: 'Платежные системы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
-  { id: 13, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 14, name: 'Мир', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/mir.svg', description: 'Платежные системы', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 4 },
-  { id: 15, name: 'Louis Vuitton', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/lv.svg', description: 'Одежда и аксессуары', country: 'Франция', countryImg: '/img/flags/france.svg', relations: 1 },
-  { id: 16, name: 'Toyota', type: 'property', color: '#262e83', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 6600, 8800, 11000], level: 1, logo: '/img/TOYOTA.svg', description: 'Автомобили', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 6 },
-  { id: 17, name: 'Volkswagen', type: 'property', color: '#262e83', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 6600, 8800, 11000], level: 1, logo: '/img/VOLKSWAGEN.svg', description: 'Автомобили', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 6 },
-  { id: 18, name: 'Lada', type: 'property', color: '#262e83', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 6600, 8800, 11000], level: 1, logo: '/img/LADA.svg', description: 'Автомобили', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 6 },
-  { id: 19, name: 'Facebook', type: 'property', color: '#0d6efd', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [175, 3100, 5300, 7400, 9500], level: 1, logo: '/img/FACEBOOK.svg', description: 'Социальные интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 5 },
-  { id: 20, name: 'Бесплатная парковка', type: 'park', logo: '/img/park.svg' },
-  { id: 21, name: 'Telegram', type: 'property', color: '#0d6efd', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [175, 3100, 5300, 7400, 9500], level: 1, logo: '/img/TELEGRAM.svg', description: 'Социальные интернет-сервисы', relations: 5 },
-  { id: 22, name: 'Icbc', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [192, 3300, 6900, 9200, 11500], level: 1, logo: '/img/ICBC.svg', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
-  { id: 23, name: 'Ccb', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [192, 3300, 6900, 9200, 11500], level: 1, logo: '/img/CCB.svg', description: 'Банки', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 7 },
-  { id: 24, name: 'Сбербанк', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [192, 3300, 6900, 9200, 11500], level: 1, logo: '/img/sber.svg', description: 'Банки', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 7 },
-  { id: 25, name: 'Nike', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/nike.svg', description: 'Одежда и аксессуары', country: 'США', countryImg: '/img/flags/usa.svg', relations: 1 },
-  { id: 26, name: 'Samsung', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/SAMSUNG.svg', description: 'Электроника высокого уровня', country: 'Корея', countryImg: '/img/flags/korea.svg', relations: 8 },
-  { id: 27, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 28, name: 'Xiaomi', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/xiaomi.svg', description: 'Электроника высокого уровня', country: 'Китай', countryImg: '/img/flags/china.svg', relations: 8 },
-  { id: 29, name: 'Apple', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/APPLE.svg', description: 'Электроника высокого уровня', country: 'США', countryImg: '/img/flags/usa.svg', relations: 8 },
+  { id: 1, name: 'Unreal Engine', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/ue.svg', description: 'Игровые движки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
+    { id: 2, name: 'Unity', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/unity.svg', description: 'Игровые движки', country: 'США', countryImg: '/img/flags/usa.svg', relations: 2 },
+    { id: 3, name: 'Godot', type: 'property', color: '#f57c00', price: '600', sellPrice: [300, 900, 2400, 3900, 5400], rent: [50, 1600, 2800, 3400, 4000], level: 1, logo: '/img/godot.svg', description: 'Игровые движки', country: 'Аргентина', countryImg: '/img/flags/rus.svg', relations: 2 },
+    { id: 4, name: 'Налог на доходы', type: 'tax', logo: '/img/money.svg' },
+    { id: 5, name: 'Spotify', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/spotify.svg', description: 'Музыкальные стриминговые сервисы', country: 'Швеция', countryImg: '/img/flags/germany.svg', relations: 1 },
+    { id: 6, name: 'Domino’s Pizza', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/domino.svg', description: 'Пицца-индустрия', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
+    { id: 7, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+    { id: 8, name: 'Pizza Hut', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/phut.svg', description: 'Пицца-индустрия', country: 'США', countryImg: '/img/flags/usa.svg', relations: 3 },
+    { id: 9, name: 'Додо Пицца', type: 'property', color: '#ffa000', price: '1300', sellPrice: [650, 1250, 2750, 4250, 5750], rent: [108, 2300, 3900, 5200, 6500], level: 1, logo: '/img/dodo.svg', description: 'Пицца-индустрия', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 3 },
+    { id: 10, name: 'Полицеский участок', type: 'jail', logo: '/img/jail.svg' },
+    { id: 11, name: 'Electronic Arts', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/ea.svg', description: 'Издатели видеоигр', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
+    { id: 12, name: 'Activision', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/activision.svg', description: 'Издатели видеоигр', country: 'США', countryImg: '/img/flags/usa.svg', relations: 4 },
+    { id: 13, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+    { id: 14, name: 'Capcom', type: 'property', color: '#7cb342', price: '1700', sellPrice: [850, 1450, 2950, 4450, 5950], rent: [142, 2700, 5100, 6800, 8500], level: 1, logo: '/img/capcom.svg', description: 'Издатели видеоигр', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 4 },
+    { id: 15, name: 'Apple Music', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/applem.svg', description: 'Музыкальные стриминговые сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 1 },
+    { id: 16, name: 'LEGO Group', type: 'property', color: '#262e83', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [175, 3100, 5300, 7400, 9500], level: 1, logo: '/img/lego.svg', description: 'Индустрия игрушек', country: 'Дания', countryImg: '/img/flags/japan.svg', relations: 6 },
+    { id: 17, name: 'Hasbro', type: 'property', color: '#262e83', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [175, 3100, 5300, 7400, 9500], level: 1, logo: '/img/hasbro.svg', description: 'Индустрия игрушек', country: 'США', countryImg: '/img/flags/usa.svg', relations: 6 },
+    { id: 18, name: 'Spin Master', type: 'property', color: '#262e83', price: '2100', sellPrice: [1050, 1650, 3150, 4650, 6150], rent: [175, 3100, 5300, 7400, 9500], level: 1, logo: '/img/spin.svg', description: 'Индустрия игрушек', country: 'Канада', countryImg: '/img/flags/rus.svg', relations: 6 },
+    { id: 19, name: 'PlayStation', type: 'property', color: '#0d6efd', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 6600, 8800, 11000], level: 1, logo: '/img/ps.svg', description: 'Игровые консоли', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 5 },
+    { id: 20, name: 'Бесплатная парковка', type: 'park', logo: '/img/park.svg' },
+    { id: 21, name: 'Xbox', type: 'property', color: '#0d6efd', price: '2200', sellPrice: [1100, 1700, 3200, 4700, 6200], rent: [183, 3200, 6600, 8800, 11000], level: 1, logo: '/img/xbox.svg', country: 'США', countryImg: '/img/flags/usa.svg', description: 'Игровые консоли', relations: 5 },
+    { id: 24, name: 'Casio', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [192, 3300, 6900, 9200, 11500], level: 1, logo: '/img/casio.svg', description: 'Часовая индустрия', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 7 },
+    { id: 23, name: 'Orient', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [192, 3300, 6900, 9200, 11500], level: 1, logo: '/img/orient.svg', description: 'Часовая индустрия', country: 'Япония', countryImg: '/img/flags/japan.svg', relations: 7 },
+    { id: 22, name: 'Rolex', type: 'property', color: '#198754', price: '2300', sellPrice: [1150, 1750, 3250, 4750, 6250], rent: [192, 3300, 6900, 9200, 11500], level: 1, logo: '/img/rolex.svg', description: 'Часовая индустрия', country: 'Швейцария', countryImg: '/img/flags/china.svg', relations: 7 },
+    { id: 25, name: 'Яндекс Музыка', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/yandexm.svg', description: 'Музыкальные стриминговые сервисы', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 1 },
+    { id: 26, name: 'Савушкин продукт', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/sav.svg', description: 'Молочная индустрия', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 8 },
+    { id: 27, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
+    { id: 28, name: 'Chobani', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/chobani.svg', description: 'Молочная индустрия', country: 'США', countryImg: '/img/flags/usa.svg', relations: 8 },
+    { id: 29, name: 'Danone', type: 'property', color: '#93bbf6', price: '2500', sellPrice: [1250, 1850, 3350, 4850, 6350], rent: [208, 3500, 7500, 10000, 12500], level: 1, logo: '/img/danone.svg', description: 'Молочная индустрия', country: 'Франция', countryImg: '/img/flags/france.svg', relations: 8 },
   { id: 30, name: 'Злой полицейский', type: 'car', logo: '/img/police1.svg' },
-  { id: 31, name: 'Saudi Aramco', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/sa.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Саудовская Аравия', countryImg: '/img/flags/sa.svg', relations: 9 },
-  { id: 32, name: 'Shell', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/shell.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Великобритания', countryImg: '/img/flags/uk.svg', relations: 9 },
+  { id: 31, name: 'Tim Hortons', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/tim.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Канада', countryImg: '/img/flags/canada.svg', relations: 9 },
+  { id: 32, name: 'Costa Coffee', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/costa.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Великобритания', countryImg: '/img/flags/uk.svg', relations: 9 },
   { id: 33, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 34, name: 'Лукойл', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/l.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'Россия', countryImg: '/img/flags/rus.svg', relations: 9 },
+  { id: 34, name: 'Starbucks', type: 'property', color: '#a54bef', price: '2600', sellPrice: [1300, 1900, 3400, 4900, 6400], rent: [228, 3600, 7800, 10400, 13000], level: 1, logo: '/img/starbucks.svg', description: 'Добыча, переработка и экспорт ресурсов', country: 'США', countryImg: '/img/flags/usa.svg', relations: 9 },
   { id: 35, name: 'Gucci', type: 'train', color: '#d31a2c', price: '2000', sellPrice: [1000], level: 1, rent: [260, 500, 1100, 2000], logo: '/img/gucci.svg', description: 'Одежда и аксессуары', country: 'Италия', countryImg: '/img/flags/italy.svg', relations: 1 },
   { id: 36, name: 'Налог на роскошь', type: 'tax2', logo: '/img/diamond.svg' },
-  { id: 37, name: 'Microsoft', type: 'property', color: '#292929', price: '3100', sellPrice: [1550, 2150, 3650, 5150, 6650], rent: [258, 4100, 8300, 11400, 12500], level: 1, logo: '/img/MICROSOFT.svg', description: 'Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
+  { id: 37, name: `L'Oréal`, type: 'property', color: '#292929', price: '3100', sellPrice: [1550, 2150, 3650, 5150, 6650], rent: [258, 4100, 8300, 11400, 12500], level: 1, logo: '/img/loreal.svg', description: 'Цифровые услуги, интернет-сервисы', country: 'Франция', countryImg: '/img/flags/france.svg', relations: 10 },
   { id: 38, name: 'Шанс', type: 'chance', logo: '/img/question.svg' },
-  { id: 39, name: 'Google', type: 'property', color: '#292929', price: '3100', sellPrice: [1550, 2150, 3650, 5150, 6650], rent: [258, 4100, 8300, 11400, 12500], level: 1, logo: '/img/GOOGLE.svg', description: 'Цифровые услуги, интернет-сервисы', country: 'США', countryImg: '/img/flags/usa.svg', relations: 10 },
+  { id: 39, name: 'Nivea', type: 'property', color: '#292929', price: '3100', sellPrice: [1550, 2150, 3650, 5150, 6650], rent: [258, 4100, 8300, 11400, 12500], level: 1, logo: '/img/nivea.svg', description: 'Цифровые услуги, интернет-сервисы', country: 'Германия', countryImg: '/img/flags/germany.svg', relations: 10 },
 ]);
 
 const getCurrentRent = (cell) => {
@@ -1182,7 +1182,7 @@ const removeNotification = (id) => {
             </span>
           </div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' || cell.type === 'jail' || cell.type === 'start' }]">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -1207,7 +1207,7 @@ const removeNotification = (id) => {
             </span>
             </div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' || cell.type === 'jail' || cell.type === 'start' }]">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -1228,7 +1228,7 @@ const removeNotification = (id) => {
             </span>
             </div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' || cell.type === 'jail' || cell.type === 'start' }]">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -1249,7 +1249,7 @@ const removeNotification = (id) => {
             </span>
             </div>
             <div class="cell-content">
-              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' || cell.type === 'jail' || cell.type === 'start' }]">
+              <img v-if="cell.logo" :src="cell.logo" :class="['cell-logo', { 'logo-small': cell.type === 'car' || cell.type === 'park' || cell.type === 'coffe' }]">
               <span v-else class="cell-name">{{ cell.name }}</span>
             </div>
             <div class="tokens-layer">
@@ -1514,7 +1514,7 @@ const removeNotification = (id) => {
 
   image-rendering: pixelated;
  }
-.cell-logo.logo-small { max-width: 100%; max-height: 85%;     min-width: 46px; }
+.cell-logo.logo-small { max-width: 75%; max-height: 55%; }
 .cell-name { font-size: 10px; font-weight: bold; text-align: center; color: #333; }
 
 .top-cell.has-price .cell-content { transform: translateY(-6px); }
@@ -2043,8 +2043,7 @@ const removeNotification = (id) => {
 }
 .jail-police-image{
   max-width: 160px;
-
-    min-width: 112px;
+  min-width: 112px;
 }
 
 .notification-container {

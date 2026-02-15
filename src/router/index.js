@@ -2,6 +2,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../components/Home.vue';
 import Main from '../components/Main.vue';
+import MainContinuation from '../components/MainContinuation.vue';
 import Rus from '../components/Rus.vue';
 
 // .avatar-icon{
@@ -22,12 +23,17 @@ const routes = [
     component: Home, // Компонент, который будет отображаться
   },
   {
-    path: '/:count/play',
+    path: '/:count/play/all',
     name: 'Main',
     component: Main,
   },
   {
-    path: '/rus/:count',
+    path: '/:count/play/all-continuation',
+    name: 'MainContinuation',
+    component: MainContinuation,
+  },
+  {
+    path: '/:count/play/rus',
     name: 'Rus',
     component: Rus,
   },
