@@ -129,8 +129,8 @@ const setRandomPhrase = () => {
 };
 
 const players = ref([
-  { id: 1, name: 'Игрок 1', balance: '17000', color: '#ff4d4d', avatar: '/img/hero/animal-1.svg', position: 0, active: true, incomingTrade: null,isInJail: false, jailTurns: 0 },
-  { id: 2, name: 'Игрок 2', balance: '17000',  color: '#ffa500', avatar: '/img/hero/animal-4.svg',  position: 0, active: false, incomingTrade: null ,isInJail: false, jailTurns: 0
+  { id: 1, name: 'Игрок 1', balance: '17000', color: '#ffa500', avatar: '/img/hero/animal-4.svg', position: 0, active: true, incomingTrade: null,isInJail: false, jailTurns: 0 },
+  { id: 2, name: 'Игрок 2', balance: '17000',  color: '#ff4d4d', avatar: '/img/hero/animal-1.svg',  position: 0, active: false, incomingTrade: null ,isInJail: false, jailTurns: 0
    },
   { id: 3, name: 'Игрок 3', balance: '17000', color: '#68d391', avatar: '/img/hero/animal-3.svg', position: 0, active: false, incomingTrade: null,isInJail: false, jailTurns: 0
    },

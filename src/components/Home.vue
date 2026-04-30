@@ -31,6 +31,15 @@
           <span>Россия</span>
         </div>
       </button>
+       <button 
+        :class="['map-btn', { active: selectedMap === 'all-continuation' }]" 
+        @click="selectedMap = 'all-continuation'"
+      >
+        <div class="btn-content">
+          <img class="img-map" :src="'/img/flags/planet.svg'" alt="world">
+          <span>Весь мир 2</span>
+        </div>
+      </button>
     </div>
     </div>
 
@@ -99,7 +108,16 @@ const gameModes = computed(() => {
   { count: 4, survivalAfter: 115, previewPlayers: [{ icon: '/img/hero/animal-1.svg', color: '#ff4d4d' }, { icon: '/img/hero/animal-4.svg', color: '#ffaa00' }, { icon: '/img/hero/animal-3.svg', color: '#68d391' }, { icon: '/img/hero/animal-2.svg', color: '#4d94ff' }] },
   { count: 5, survivalAfter: 130, previewPlayers: [{ icon: '/img/hero/animal-1.svg', color: '#ff4d4d' }, { icon: '/img/hero/animal-4.svg', color: '#ffaa00' }, { icon: '/img/hero/animal-3.svg', color: '#68d391' }, { icon: '/img/hero/animal-2.svg', color: '#4d94ff' }, { icon: '/img/hero/animal-5.svg', color: '#b06ee6' }] }
     ];
-  } else {
+  } 
+  else if(selectedMap.value === 'all-continuation'){
+    return [
+       { count: 2, survivalAfter: 80, previewPlayers: [{ icon: '/img/hero/animal-4.svg', color: '#ffaa00' },{ icon: '/img/hero/animal-1.svg', color: '#ff4d4d' }] },
+  { count: 3, survivalAfter: 100, previewPlayers: [{ icon: '/img/hero/animal-4.svg', color: '#ffaa00' },{ icon: '/img/hero/animal-1.svg', color: '#ff4d4d' }, { icon: '/img/hero/animal-3.svg', color: '#68d391' }] },
+  { count: 4, survivalAfter: 115, previewPlayers: [{ icon: '/img/hero/animal-4.svg', color: '#ffaa00' },{ icon: '/img/hero/animal-1.svg', color: '#ff4d4d' }, { icon: '/img/hero/animal-3.svg', color: '#68d391' }, { icon: '/img/hero/animal-2.svg', color: '#4d94ff' }] },
+  { count: 5, survivalAfter: 130, previewPlayers: [{ icon: '/img/hero/animal-4.svg', color: '#ffaa00' },{ icon: '/img/hero/animal-1.svg', color: '#ff4d4d' }, { icon: '/img/hero/animal-3.svg', color: '#68d391' }, { icon: '/img/hero/animal-2.svg', color: '#4d94ff' }, { icon: '/img/hero/animal-5.svg', color: '#b06ee6' }] }
+    ];
+  }
+  else {
     return [
       { count: 2, survivalAfter: 80, previewPlayers: [{ icon: '/img/hero/animal-8.svg', color: '#ff4d4d' }, { icon: '/img/hero/animal-9.svg', color: '#ffa500' }] },
   { count: 3, survivalAfter: 100, previewPlayers: [{ icon: '/img/hero/animal-8.svg', color: '#ff4d4d' }, { icon: '/img/hero/animal-9.svg', color: '#ffa500' }, { icon: '/img/hero/animal-6.svg', color: '#68d391' }] },
@@ -173,18 +191,24 @@ const startGame = (count) => {
   border: 1px solid #30353b;
   position: relative;
   z-index: 1;
+  gap: 8px;
+  width: 502px;
 }
 
 .map-btn {
   background: transparent;
   border: none;
   color: #72767d;
-  padding: 10px 28px;
+  padding: 10px 24px;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 400; /* Убрана жирность */
   transition: all 0.3s ease;
   letter-spacing: 0.5px;
+  display: flex;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  width: calc(33% - 4px);
 }
 
 .map-btn.active {
@@ -356,5 +380,20 @@ const startGame = (count) => {
 
 @media (max-width: 900px) {
   .modes-wrapper { flex-wrap: wrap; justify-content: center; }
+}
+@media (max-width: 600px) {
+  .map-selector{
+    flex-direction: column;
+    width: 100%;
+  }
+  .selector-wrapper{
+    width: 100%;
+  }
+  .map-btn{
+    width: 100%;
+  }
+  .mode-card{
+    width: 100%;
+  }
 }
 </style>
